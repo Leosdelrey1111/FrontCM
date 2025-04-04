@@ -1,0 +1,23 @@
+<div class="main-container">
+    <header class="header">
+      <h1>Bienvenido, {{ usuarioNombre }}</h1>
+      <!-- <button mat-button (click)="logout()">Cerrar Sesión</button> -->
+    </header>
+  
+    <nav class="sidenav">
+      <ul>
+        <li>
+          <a routerLink="/consultorio/agenda" routerLinkActive="active-link">
+            <mat-icon>event</mat-icon>
+            Ver Citas
+          </a>
+        </li>
+        
+      </ul>
+    </nav>
+  
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+  

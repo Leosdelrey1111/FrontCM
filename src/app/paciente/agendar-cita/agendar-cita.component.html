@@ -1,0 +1,57 @@
+<div class="agendar-cita-container">
+    <h2>Agendar Cita</h2>
+  
+    <div class="campo-formulario">
+        <label for="paciente">Paciente</label>
+        <input id="paciente" type="text" [value]="nombreUsuario" readonly />
+    </div>
+
+    <div class="campo-formulario">
+        <label for="especialidad">Especialidad</label>
+        <select id="especialidad" [(ngModel)]="especialidad" (change)="seleccionarEspecialidad(especialidad)">
+            <option value="">Seleccione una especialidad</option>
+            <option *ngFor="let esp of especialidades" [value]="esp.especialidad">
+                {{ esp.especialidad }}
+            </option>
+        </select>
+    </div>
+
+    <div *ngIf="especialidad" class="campo-formulario">
+        <label for="medico">Médico</label>
+        <select id="medico" [(ngModel)]="medicoId" (change)="seleccionarMedico(medicoId)">
+            <option value="">Seleccione un médico</option>
+            <option *ngFor="let m of medicosFiltrados" [value]="m._id">
+                {{ m.nombre }} - {{ m.especialidad }}
+            </option>
+        </select>
+    </div>
+
+    <div *ngIf="medico">
+        <div class="campo-formulario">
+            <label for="dia">Día</label>
+            <select id="dia" [(ngModel)]="diaSeleccionado" (change)="seleccionarDia(diaSeleccionado)">
+                <option value="">Seleccione un día</option>
+                <option *ngFor="let dia of diasDisponibles" [value]="dia">
+                    {{ dia | titlecase }}
+                </option>
+            </select>
+        </div>
+
+        <div class="campo-formulario">
+            <label for="hora">Hora</label>
+            <select id="hora" [(ngModel)]="hora">
+                <option value="">Seleccione una hora</option>
+                <option *ngFor="let h of horasDisponibles" [value]="h">
+                    {{ h }}
+                </option>
+            </select>
+        </div>
+
+        <div class="campo-formulario">
+            <label for="motivo">Motivo de la consulta</label>
+            <textarea id="motivo" [(ngModel)]="motivo" rows="3"></textarea>
+        </div>
+
+        <button class="boton-primario" (click)="confirmarCita()">Confirmar Cita</button>
+    </div>
+</div>

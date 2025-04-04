@@ -1,0 +1,54 @@
+<div class="container mt-4">
+    <h2>Historial de Citas</h2>
+  
+    <!-- Filtros de búsqueda -->
+    <form [formGroup]="filtrosForm" (ngSubmit)="filtrarCitas()">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha" formControlName="fecha" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label for="medico">Médico</label>
+          <select id="medico" formControlName="medico" class="form-control">
+            <option value="">Seleccionar médico</option>
+            <option *ngFor="let medico of medicos" [value]="medico._id">{{ medico.nombre }}</option>
+          </select>
+        </div>
+        
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
+    </form>
+  
+    <!-- Tabla de historial de citas -->
+    <table class="table table-striped mt-4">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Médico</th>
+          <th>Especialidad</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cita of historial">
+          <td>{{ cita.paciente?.nombre }}</td>
+          <td>{{ cita.medico?.nombre }}</td>
+          <td>{{ cita.especialidad?.nombre }}</td>
+          <td>{{ cita.fecha | date: 'shortDate' }}</td>
+          <td>{{ cita.hora }}</td>
+          <td>{{ cita.motivo || 'No especificado' }}</td>
+          <td>{{ cita.estado }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-1" (click)="editarCita(cita._id)">Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarCita(cita._id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

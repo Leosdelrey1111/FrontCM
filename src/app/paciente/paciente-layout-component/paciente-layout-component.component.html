@@ -1,0 +1,33 @@
+<div class="main-container">
+    <header class="header">
+      <h1>Bienvenido, {{ usuarioNombre }}</h1>
+      <!-- <button mat-button (click)="logout()">Cerrar Sesión</button> -->
+    </header>
+  
+    <nav class="sidenav">
+      <ul>
+        <li>
+          <a routerLink="/paciente/agendar" routerLinkActive="active-link">
+            <mat-icon>event</mat-icon>
+            Agendar Cita
+          </a>
+        </li>
+        <li>
+          <a routerLink="/paciente/historial" routerLinkActive="active-link">
+            <mat-icon>history</mat-icon>
+            Historial
+          </a>
+        </li>
+        <li>
+          <a routerLink="/paciente/perfil" routerLinkActive="active-link">
+            <mat-icon>person</mat-icon>
+            Perfil
+          </a>
+        </li>
+      </ul>
+    </nav>
+  
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
