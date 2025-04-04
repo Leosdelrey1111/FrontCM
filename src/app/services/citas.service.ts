@@ -4,61 +4,50 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CitasService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/citas`;  // Corrección: interpolación con backticks
 
   constructor(private http: HttpClient) {}
 
-  // Obtener especialidades disponibles
-  getEspecialidades(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/especialidades`);
+  obtenerCitas(): Observable<any> {
+    return this.http.get(this.apiUrl);
   }
 
-  // Obtener todos los médicos
-  getMedicos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/medicos`);
+  obtenerCitasFiltradas(filtro: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/filtrar`, filtro);  // Corrección: interpolación con backticks
   }
 
-  // Agendar una nueva cita
-  agendarCita(citaData: any): Observable<any> {
-    console.log('Enviando datos al servidor:', citaData);
-    return this.http.post<any>(`${this.apiUrl}/api/citas`, citaData);
+  crearCita(cita: any): Observable<any> {
+    return this.http.post(this.apiUrl, cita);
   }
 
-  // Obtener citas del paciente actual
-  getMisCitas(pacienteId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/citas/paciente/${pacienteId}`);
+  agendarCita(cita: any): Observable<any> {
+    return this.crearCita(cita);
   }
 
-  // Obtener citas filtradas
-  obtenerCitasFiltradas(filtros: any): Observable<any[]> {
-    // Usamos GET con query params para mejor compatibilidad con la API
-    const params = new URLSearchParams();
-    
-    // Añadir parámetros al querystring
-    Object.keys(filtros).forEach(key => {
-      if (filtros[key]) {
-        params.append(key, filtros[key]);
-      }
-    });
-    
-    return this.http.get<any[]>(`${this.apiUrl}/api/citas/filtrar?${params.toString()}`);
+  editarCita(id: string, cita: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, cita);  // Corrección: interpolación con backticks
   }
 
-  // Actualizar estado de una cita
-  actualizarEstadoCita(citaId: string, estado: string): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/api/citas/${citaId}/estado/${estado}`, {});
+  eliminarCita(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);  // Corrección: interpolación con backticks
   }
 
-  // Editar una cita
-  editarCita(citaId: string, datos: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/api/citas/${citaId}`, datos);
+  getEspecialidades(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/especialidades`);  // Corrección: interpolación con backticks
   }
 
-  // Eliminar una cita
-  eliminarCita(citaId: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/api/citas/${citaId}`);
+  getMedicos(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/medicos`);  // Corrección: interpolación con backticks
+  }
+  
+  obtenerCitasPendientes(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/pendientes`);
+  }
+
+  actualizarEstadoCita(id: string, estado: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/estado/${estado}`, {});
   }
 }

@@ -10,8 +10,8 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 export class HistorialComponent implements OnInit {
   historial: any[] = [];
   filtrosForm: FormGroup;
-  medicos: any[] = [];
-  especialidades: any[] = [];
+  medicos: any[] = []; // Para almacenar médicos
+  especialidades: any[] = []; // Para almacenar especialidades
 
   constructor(
     private citasService: CitasService,
@@ -25,14 +25,14 @@ export class HistorialComponent implements OnInit {
   }
 
   ngOnInit() {
-    const pacienteId = '...'; // Obtén este ID de algún servicio de autenticación
-  this.obtenerCitas(pacienteId);
-  this.obtenerMedicos();
-  this.obtenerEspecialidades();
+    this.obtenerCitas();
+    this.obtenerMedicos();
+    this.obtenerEspecialidades();
   }
 
-  obtenerCitas(pacienteId: string) {
-    this.citasService.getMisCitas(pacienteId).subscribe({
+  // Obtener todas las citas
+  obtenerCitas() {
+    this.citasService.obtenerCitas().subscribe({
       next: (citas) => {
         this.historial = citas;
       },
@@ -42,6 +42,7 @@ export class HistorialComponent implements OnInit {
     });
   }
 
+  // Obtener médicos
   obtenerMedicos() {
     this.citasService.getMedicos().subscribe({
       next: (medicos) => {
@@ -53,6 +54,7 @@ export class HistorialComponent implements OnInit {
     });
   }
 
+  // Obtener especialidades
   obtenerEspecialidades() {
     this.citasService.getEspecialidades().subscribe({
       next: (especialidades) => {
@@ -64,6 +66,7 @@ export class HistorialComponent implements OnInit {
     });
   }
 
+  // Filtrar citas
   filtrarCitas() {
     const filtros = this.filtrosForm.value;
     this.citasService.obtenerCitasFiltradas(filtros).subscribe({
@@ -76,11 +79,13 @@ export class HistorialComponent implements OnInit {
     });
   }
 
+  // Editar cita
   editarCita(citaId: string) {
+    // Lógica para editar cita
     console.log('Editar cita con ID:', citaId);
-    // Aquí podrías navegar a un formulario o abrir un modal
   }
 
+  // Eliminar cita
   eliminarCita(citaId: string) {
     if (confirm('¿Estás seguro de que deseas eliminar esta cita?')) {
       this.citasService.eliminarCita(citaId).subscribe({
