@@ -53,8 +53,11 @@ export class CitasService {
 
   obtenerCitasPorMedico(medicoId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/citasmedico/${medicoId}`);
-  }  
+  } 
+  obtenerCitasPorMedicoAceptada(medicoId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/citasmedicoa/${medicoId}`);
+  }   
 
-  
+
 
 }

@@ -7,11 +7,13 @@ import { LayoutmedicoComponent } from './layoutmedico/layoutmedico.component';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { CitaAceptadaComponent } from './cita-aceptada/cita-aceptada.component';
 
 @NgModule({
   declarations: [
     AgendaComponent,
-    LayoutmedicoComponent
+    LayoutmedicoComponent,
+    CitaAceptadaComponent
   ],
   imports: [
     CommonModule,
