@@ -50,4 +50,8 @@ export class CitasService {
   actualizarEstadoCita(id: string, estado: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/estado/${estado}`, {});
   }
+
+  obtenerCitasPorMedico(medicoId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/citasmedico/${medicoId}`);
+  }  
 }

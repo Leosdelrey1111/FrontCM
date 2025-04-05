@@ -9,31 +9,31 @@ import { CitasService } from '../../services/citas.service';
 })
 export class AgendaComponent implements OnInit {
   citasPendientes: any[] = [];
+  todosLosMedicos: any[] = [];  // Lista de médicos
+  medicoId: string = '';  // Definir la variable medicoId
 
   constructor(private citasService: CitasService) {}
 
   ngOnInit() {
-    this.obtenerCitasPendientes();
+    // Obtener el ID del médico desde el localStorage
+    this.medicoId = localStorage.getItem('medicoId') || '';  
+
+    // Si se encuentra el ID del médico, obtener sus citas
+    if (this.medicoId) {
+      this.obtenerCitasPorMedico(this.medicoId);
+    } else {
+      console.error('ID de médico no encontrado');
+    }
   }
 
-  // Obtener citas pendientes
-  obtenerCitasPendientes() {
-    this.citasService.obtenerCitasPendientes().subscribe((data) => {
-      this.citasPendientes = data.citas;
-    });
-  }
-
-  // Aceptar cita
-  aceptarCita(citaId: string) {
-    this.citasService.actualizarEstadoCita(citaId, 'Confirmada').subscribe(() => {
-      this.obtenerCitasPendientes();
-    });
-  }
-
-  // Atender cita
-  atenderCita(citaId: string) {
-    this.citasService.actualizarEstadoCita(citaId, 'Atendida').subscribe(() => {
-      this.obtenerCitasPendientes();
+  obtenerCitasPorMedico(medicoId: string) {
+    this.citasService.obtenerCitasPorMedico(medicoId).subscribe({
+      next: (data) => {
+        this.citasPendientes = data.citas;
+      },
+      error: (err) => {
+        console.error('Error al obtener citas:', err);
+      }
     });
   }
 }

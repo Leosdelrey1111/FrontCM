@@ -11,7 +11,5 @@ export class LayoutmedicoComponent {
 
   constructor(private authService: AuthService) {}
 
-  // logout() {
-  //   this.authService.logout();
-  // }
+ 
 }
