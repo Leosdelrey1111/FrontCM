@@ -1,0 +1,21 @@
+.container {
+    max-width: 900px;
+  }
+  
+  .card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
+  
+  h2 {
+    font-weight: bold;
+  }
+  
+  h5 {
+    margin-bottom: 1rem;
+  }
+  
+  button {
+    min-width: 80px;
+  }
+  

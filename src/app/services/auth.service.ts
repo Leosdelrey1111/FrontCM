@@ -18,4 +18,22 @@ export class AuthService {
   iniciarSesion(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials);
   }
+
+  // citas.service.ts
+  obtenerCitasPorUsuario(usuarioId: string): Observable<any> {
+    // Verifica que la URL sea correcta
+    return this.http.get(`${this.apiUrl}/usuario/${usuarioId}`);
+  }
+  
+  obtenerUsuarioId(): string {
+    return localStorage.getItem('userId') || '';
+  }
+
+  estaAutenticado(): boolean {
+    return !!localStorage.getItem('userId');
+  }
+
+  cerrarSesion() {
+    localStorage.clear();
+  }
 }
