@@ -29,11 +29,26 @@ export class AgendaComponent implements OnInit {
   obtenerCitasPorMedico(medicoId: string) {
     this.citasService.obtenerCitasPorMedico(medicoId).subscribe({
       next: (data) => {
+        console.log('Citas recibidas:', data.citas);
         this.citasPendientes = data.citas;
       },
       error: (err) => {
         console.error('Error al obtener citas:', err);
       }
     });
+  }
+  cambiarEstado(_id: string, nuevoEstado: string): void {
+    this.citasService.actualizarEstadoCita(_id, nuevoEstado).subscribe(
+      (response) => {
+        console.log('Estado actualizado:', response);
+        const cita = this.citasPendientes.find((cita) => cita._id === _id);
+        if (cita) {
+          cita.estado = nuevoEstado;
+        }
+      },
+      (error) => {
+        console.error('Error al actualizar el estado:', error);
+      }
+    );
   }
 }
