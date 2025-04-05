@@ -37,6 +37,7 @@ export class HistorialComponent implements OnInit {
       this.obtenerCitas(usuario._id);
     }
 
+    // Obtener médicos y especialidades
     this.obtenerMedicos();
     this.obtenerEspecialidades();
   }
@@ -76,10 +77,9 @@ export class HistorialComponent implements OnInit {
 
   editarCita(cita: any) {
     this.citaEditando = cita;
-    // Usamos el ID de la especialidad y el médico para asignar correctamente
     this.formularioEdicion.patchValue({
       medico: cita.medico?._id || '',
-      especialidad: cita.especialidad?._id || '',
+      especialidad: cita.especialidad?._id || '', // Asegúrate de enviar el ID de la especialidad
       fecha: cita.fecha?.substring(0, 10) || '',
       hora: cita.hora || '',
       motivo: cita.motivo || ''

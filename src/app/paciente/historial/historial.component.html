@@ -1,6 +1,7 @@
 <div class="container mt-4">
   <h2>Historial de Citas</h2>
 
+  <!-- Tabla de historial de citas -->
   <table class="table table-striped mt-4">
     <thead>
       <tr>
@@ -18,54 +19,52 @@
       <tr *ngFor="let cita of historial">
         <td>{{ cita.paciente?.nombre }}</td>
         <td>{{ cita.medico?.nombre }}</td>
-        <td>{{ cita.especialidad?.nombre || 'No asignada' }}</td>
+        <td>{{ cita.especialidad?.nombre || cita.especialidad }}</td>
         <td>{{ cita.fecha | date: 'shortDate' }}</td>
         <td>{{ cita.hora }}</td>
-        <td>{{ cita.motivo }}</td>
+        <td>{{ cita.motivo || 'No especificado' }}</td>
         <td>{{ cita.estado }}</td>
         <td>
-          <button (click)="editarCita(cita)">Editar</button>
-          <button (click)="eliminarCita(cita._id)">Eliminar</button>
+          <button class="btn btn-warning btn-sm me-1" (click)="editarCita(cita)">Editar</button>
+          <button class="btn btn-danger btn-sm" (click)="eliminarCita(cita._id)">Eliminar</button>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <!-- Modal o formulario para editar la cita -->
-  <div *ngIf="citaEditando">
-    <h3>Editar Cita</h3>
+  <!-- Formulario de edición -->
+  <div *ngIf="citaEditando" class="card mt-4 p-3">
+    <h5>Editar Cita</h5>
     <form [formGroup]="formularioEdicion" (ngSubmit)="guardarEdicion()">
-      <div>
-        <label for="especialidad">Especialidad</label>
-        <select id="especialidad" formControlName="especialidad">
-          <option value="">Seleccione una especialidad</option>
-          <option *ngFor="let esp of especialidades" [value]="esp._id">
-            {{ esp.nombre }}
-          </option>
+      <div class="mb-2">
+        <label>Fecha:</label>
+        <input type="date" class="form-control" formControlName="fecha">
+      </div>
+      <div class="mb-2">
+        <label>Hora:</label>
+        <input type="time" class="form-control" formControlName="hora">
+      </div>
+      <div class="mb-2">
+        <label>Motivo:</label>
+        <input type="text" class="form-control" formControlName="motivo">
+      </div>
+      <div class="mb-2">
+        <label>Médico:</label>
+        <select class="form-control" formControlName="medico">
+          <option *ngFor="let medico of medicos" [value]="medico._id">{{ medico.nombre }}</option>
         </select>
       </div>
-      <div>
-        <label for="medico">Médico</label>
-        <select id="medico" formControlName="medico">
-          <option value="">Seleccione un médico</option>
-          <option *ngFor="let medico of medicos" [value]="medico._id">
-            {{ medico.nombre }}
-          </option>
+      <div class="mb-2">
+        <label>Especialidad:</label>
+        <select class="form-control" formControlName="especialidad">
+          <option *ngFor="let especialidad of especialidades" [value]="especialidad._id">{{ especialidad.nombre }}</option>
         </select>
       </div>
-      <div>
-        <label for="fecha">Fecha</label>
-        <input id="fecha" type="date" formControlName="fecha">
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-success" type="submit">Guardar</button>
+        <button class="btn btn-secondary" type="button" (click)="cancelarEdicion()">Cancelar</button>
       </div>
-      <div>
-        <label for="hora">Hora</label>
-        <input id="hora" type="time" formControlName="hora">
-      </div>
-      <div>
-        <label for="motivo">Motivo</label>
-        <textarea id="motivo" formControlName="motivo"></textarea>
-      </div>
-      <button type="submit">Guardar cambios</button>
     </form>
   </div>
 </div>
