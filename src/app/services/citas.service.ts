@@ -44,21 +44,12 @@ export class CitasService {
   }
 
   getMedicos(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/medicos`);
-  }
-
-   // Método corregido
-   actualizarCita(id: string, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, datos);
-  }
-  agendarCita(cita: any): Observable<any> {
-    return this.crearCita(cita);
+    return this.http.get(`${environment.apiUrl}/medicos`);  // Corrección: interpolación con backticks
   }
 
   obtenerCitasPendientes(): Observable<any> {
     return this.http.get(`${this.apiUrl}/pendientes`);
   }
-
 
   actualizarEstadoCita(id: string, estado: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/estado/${id}`, { estado });
