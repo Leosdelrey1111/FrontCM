@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CitasService } from '../../services/citas.service';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { MedicosService } from '../../services/medicos.service';
+import { EspecialidadesService } from '../../services/especialidades.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-historial',
@@ -9,30 +11,38 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 })
 export class HistorialComponent implements OnInit {
   historial: any[] = [];
-  filtrosForm: FormGroup;
-  medicos: any[] = []; // Para almacenar médicos
-  especialidades: any[] = []; // Para almacenar especialidades
+  citaEditando: any = null;
+  formularioEdicion: FormGroup;
+  medicos: any[] = [];
+  especialidades: any[] = [];
 
   constructor(
     private citasService: CitasService,
+    private medicosService: MedicosService,
+    private especialidadesService: EspecialidadesService,
     private fb: FormBuilder
   ) {
-    this.filtrosForm = this.fb.group({
-      fecha: [''],
+    this.formularioEdicion = this.fb.group({
       medico: [''],
-      especialidad: ['']
+      especialidad: [''],
+      fecha: [''],
+      hora: [''],
+      motivo: ['']
     });
   }
 
   ngOnInit() {
-    this.obtenerCitas();
+    const usuario = JSON.parse(localStorage.getItem('usuario')!);
+    if (usuario && usuario._id) {
+      this.obtenerCitas(usuario._id);
+    }
+
     this.obtenerMedicos();
     this.obtenerEspecialidades();
   }
 
-  // Obtener todas las citas
-  obtenerCitas() {
-    this.citasService.obtenerCitas().subscribe({
+  obtenerCitas(usuarioId: string) {
+    this.citasService.obtenerCitasPorUsuario(usuarioId).subscribe({
       next: (citas) => {
         this.historial = citas;
       },
@@ -42,9 +52,8 @@ export class HistorialComponent implements OnInit {
     });
   }
 
-  // Obtener médicos
   obtenerMedicos() {
-    this.citasService.getMedicos().subscribe({
+    this.medicosService.obtenerMedicos().subscribe({
       next: (medicos) => {
         this.medicos = medicos;
       },
@@ -54,9 +63,8 @@ export class HistorialComponent implements OnInit {
     });
   }
 
-  // Obtener especialidades
   obtenerEspecialidades() {
-    this.citasService.getEspecialidades().subscribe({
+    this.especialidadesService.obtenerEspecialidades().subscribe({
       next: (especialidades) => {
         this.especialidades = especialidades;
       },
@@ -66,26 +74,43 @@ export class HistorialComponent implements OnInit {
     });
   }
 
-  // Filtrar citas
-  filtrarCitas() {
-    const filtros = this.filtrosForm.value;
-    this.citasService.obtenerCitasFiltradas(filtros).subscribe({
-      next: (citas) => {
-        this.historial = citas;
+  editarCita(cita: any) {
+    this.citaEditando = cita;
+    // Usamos el ID de la especialidad y el médico para asignar correctamente
+    this.formularioEdicion.patchValue({
+      medico: cita.medico?._id || '',
+      especialidad: cita.especialidad?._id || '',
+      fecha: cita.fecha?.substring(0, 10) || '',
+      hora: cita.hora || '',
+      motivo: cita.motivo || ''
+    });
+  }
+
+  guardarEdicion() {
+    if (!this.citaEditando) return;
+
+    const datosActualizados = this.formularioEdicion.value;
+    this.citasService.editarCita(this.citaEditando._id, datosActualizados).subscribe({
+      next: (actualizada) => {
+        const index = this.historial.findIndex(c => c._id === this.citaEditando._id);
+        if (index !== -1) {
+          this.historial[index] = actualizada;
+        }
+        alert('Cita actualizada correctamente.');
+        this.cancelarEdicion();
       },
       error: (err) => {
         console.error(err);
+        alert('Error al actualizar la cita.');
       }
     });
   }
 
-  // Editar cita
-  editarCita(citaId: string) {
-    // Lógica para editar cita
-    console.log('Editar cita con ID:', citaId);
+  cancelarEdicion() {
+    this.citaEditando = null;
+    this.formularioEdicion.reset();
   }
 
-  // Eliminar cita
   eliminarCita(citaId: string) {
     if (confirm('¿Estás seguro de que deseas eliminar esta cita?')) {
       this.citasService.eliminarCita(citaId).subscribe({

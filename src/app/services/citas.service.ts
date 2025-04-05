@@ -7,45 +7,58 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class CitasService {
-  private apiUrl = `${environment.apiUrl}/citas`;  // Corrección: interpolación con backticks
+  private apiUrl = `${environment.apiUrl}/citas`;
 
   constructor(private http: HttpClient) {}
 
+  // Método actualizado para obtener citas por usuario
+  // citas.service.ts
+  obtenerCitasPorUsuario(usuarioId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/usuario/${usuarioId}`);
+  }
+
+  // Resto de métodos manteniendo consistencia en los nombres
   obtenerCitas(): Observable<any> {
     return this.http.get(this.apiUrl);
   }
 
   obtenerCitasFiltradas(filtro: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/filtrar`, filtro);  // Corrección: interpolación con backticks
+    return this.http.post(`${this.apiUrl}/filtrar`, filtro);
   }
 
   crearCita(cita: any): Observable<any> {
     return this.http.post(this.apiUrl, cita);
   }
 
+  editarCita(id: string, datos: any) {
+    return this.http.put<any>(`http://localhost:3000/api/citas/${id}`, datos);
+  }
+  
+
+  eliminarCita(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getEspecialidades(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/especialidades`);
+  }
+
+  getMedicos(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/medicos`);
+  }
+
+   // Método corregido
+   actualizarCita(id: string, datos: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, datos);
+  }
   agendarCita(cita: any): Observable<any> {
     return this.crearCita(cita);
   }
 
-  editarCita(id: string, cita: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, cita);  // Corrección: interpolación con backticks
-  }
-
-  eliminarCita(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);  // Corrección: interpolación con backticks
-  }
-
-  getEspecialidades(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/especialidades`);  // Corrección: interpolación con backticks
-  }
-
-  getMedicos(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/medicos`);  // Corrección: interpolación con backticks
-  }
-  
   obtenerCitasPendientes(): Observable<any> {
     return this.http.get(`${this.apiUrl}/pendientes`);
   }
+
 
   actualizarEstadoCita(id: string, estado: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/estado/${id}`, { estado });
@@ -57,7 +70,6 @@ export class CitasService {
   obtenerCitasPorMedicoAceptada(medicoId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/citasmedicoa/${medicoId}`);
   }   
-
 
 
 }
