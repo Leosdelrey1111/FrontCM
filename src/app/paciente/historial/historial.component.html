@@ -1,54 +1,70 @@
 <div class="container mt-4">
-    <h2>Historial de Citas</h2>
-  
-    <!-- Filtros de búsqueda -->
-    <form [formGroup]="filtrosForm" (ngSubmit)="filtrarCitas()">
-      <div class="row">
-        <div class="col-md-4">
-          <label for="fecha">Fecha</label>
-          <input type="date" id="fecha" formControlName="fecha" class="form-control">
-        </div>
-        <div class="col-md-4">
-          <label for="medico">Médico</label>
-          <select id="medico" formControlName="medico" class="form-control">
-            <option value="">Seleccionar médico</option>
-            <option *ngFor="let medico of medicos" [value]="medico._id">{{ medico.nombre }}</option>
-          </select>
-        </div>
-        
+  <h2>Historial de Citas</h2>
+
+  <!-- Tabla de historial de citas -->
+  <table class="table table-striped mt-4">
+    <thead>
+      <tr>
+        <th>Paciente</th>
+        <th>Médico</th>
+        <th>Especialidad</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Motivo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cita of historial">
+        <td>{{ cita.paciente?.nombre }}</td>
+        <td>{{ cita.medico?.nombre }}</td>
+        <td>{{ cita.especialidad?.nombre || cita.especialidad }}</td>
+        <td>{{ cita.fecha | date: 'shortDate' }}</td>
+        <td>{{ cita.hora }}</td>
+        <td>{{ cita.motivo || 'No especificado' }}</td>
+        <td>{{ cita.estado }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm me-1" (click)="editarCita(cita)">Editar</button>
+          <button class="btn btn-danger btn-sm" (click)="eliminarCita(cita._id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Formulario de edición -->
+  <div *ngIf="citaEditando" class="card mt-4 p-3">
+    <h5>Editar Cita</h5>
+    <form [formGroup]="formularioEdicion" (ngSubmit)="guardarEdicion()">
+      <div class="mb-2">
+        <label>Fecha:</label>
+        <input type="date" class="form-control" formControlName="fecha">
       </div>
-      <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
+      <div class="mb-2">
+        <label>Hora:</label>
+        <input type="time" class="form-control" formControlName="hora">
+      </div>
+      <div class="mb-2">
+        <label>Motivo:</label>
+        <input type="text" class="form-control" formControlName="motivo">
+      </div>
+      <div class="mb-2">
+        <label>Médico:</label>
+        <select class="form-control" formControlName="medico">
+          <option *ngFor="let medico of medicos" [value]="medico._id">{{ medico.nombre }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label>Especialidad:</label>
+        <select class="form-control" formControlName="especialidad">
+          <option *ngFor="let especialidad of especialidades" [value]="especialidad._id">{{ especialidad.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-success" type="submit">Guardar</button>
+        <button class="btn btn-secondary" type="button" (click)="cancelarEdicion()">Cancelar</button>
+      </div>
     </form>
-  
-    <!-- Tabla de historial de citas -->
-    <table class="table table-striped mt-4">
-      <thead>
-        <tr>
-          <th>Paciente</th>
-          <th>Médico</th>
-          <th>Especialidad</th>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Motivo</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let cita of historial">
-          <td>{{ cita.paciente?.nombre }}</td>
-          <td>{{ cita.medico?.nombre }}</td>
-          <td>{{ cita.especialidad?.nombre }}</td>
-          <td>{{ cita.fecha | date: 'shortDate' }}</td>
-          <td>{{ cita.hora }}</td>
-          <td>{{ cita.motivo || 'No especificado' }}</td>
-          <td>{{ cita.estado }}</td>
-          <td>
-            <button class="btn btn-warning btn-sm me-1" (click)="editarCita(cita._id)">Editar</button>
-            <button class="btn btn-danger btn-sm" (click)="eliminarCita(cita._id)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
-  
+</div>
