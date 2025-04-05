@@ -22,9 +22,6 @@ export class CitasService {
     return this.http.get(this.apiUrl);
   }
 
-  obtenerCitasFiltradas(filtro: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/filtrar`, filtro);
-  }
 
   crearCita(cita: any): Observable<any> {
     return this.http.post(this.apiUrl, cita);
@@ -62,4 +59,10 @@ export class CitasService {
   obtenerCitasPendientes(): Observable<any> {
     return this.http.get(`${this.apiUrl}/pendientes`);
   }
+
+  // Ejemplo de implementación en el servicio de CitasService
+obtenerCitasFiltradas(filtros: any) {
+  return this.http.get<any[]>('/api/citas', { params: filtros });
+}
+
 }
