@@ -37,7 +37,6 @@ export class HistorialComponent implements OnInit {
       this.obtenerCitas(usuario._id);
     }
 
-    // Obtener médicos y especialidades
     this.obtenerMedicos();
     this.obtenerEspecialidades();
   }
@@ -78,8 +77,8 @@ export class HistorialComponent implements OnInit {
   editarCita(cita: any) {
     this.citaEditando = cita;
     this.formularioEdicion.patchValue({
-      medico: cita.medico?._id || '',
-      especialidad: cita.especialidad?._id || '', // Asegúrate de enviar el ID de la especialidad
+      medico: cita.medicoInfo?._id || '',
+      especialidad: cita.especialidadInfo?._id || '',
       fecha: cita.fecha?.substring(0, 10) || '',
       hora: cita.hora || '',
       motivo: cita.motivo || ''
@@ -125,4 +124,30 @@ export class HistorialComponent implements OnInit {
       });
     }
   }
+
+  idCitaParaEliminar: string | null = null;
+
+abrirConfirmacion(citaId: string) {
+  this.idCitaParaEliminar = citaId;
+}
+
+cancelarEliminar() {
+  this.idCitaParaEliminar = null;
+}
+
+confirmarEliminar() {
+  if (!this.idCitaParaEliminar) return;
+
+  this.citasService.eliminarCita(this.idCitaParaEliminar).subscribe({
+    next: () => {
+      this.historial = this.historial.filter(c => c._id !== this.idCitaParaEliminar);
+      this.idCitaParaEliminar = null;
+    },
+    error: (err) => {
+      console.error(err);
+      this.idCitaParaEliminar = null;
+    }
+  });
+}
+
 }

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { MedicoModule } from '../../medico/medico.module';
 
 @Component({
   selector: 'app-login',
@@ -12,33 +11,37 @@ import { MedicoModule } from '../../medico/medico.module';
 export class LoginComponent {
   correo = '';
   contrasenia = '';
-  
 
   constructor(private authService: AuthService, private router: Router) {}
 
   iniciarSesion() {
     this.authService.iniciarSesion({ correo: this.correo, contraseña: this.contrasenia }).subscribe({
       next: (res) => {
-        console.log('Respuesta del servidor:', res);
+        const usuario = res.usuario;
+        console.log('Respuesta del servidor:', usuario);
 
-        // Guardar los datos del usuario en localStorage
-        localStorage.setItem('usuario', JSON.stringify(res.usuario));
-      const medicoId = res.usuario._id;    
-      console.log('ID del usuario:',medicoId);
-      localStorage.setItem('medicoId', medicoId); 
-   
-        
-  
-        const rol = res.usuario.rol;
-        if (rol === 'Paciente') {
-          this.router.navigate(['/paciente']);
-        } else if (rol === 'Consultorio') {
-          this.router.navigate(['/consultorio']);
-        } else if (rol === 'Medico') {
-          localStorage.setItem('medicoId', medicoId);
-          this.router.navigate(['/medico']);
-        } else {
-          alert('Rol no reconocido.');
+        // Guardar los datos del usuario (incluye nombreCompleto) en localStorage
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+
+        // Guardar ID del médico si aplica
+        if (usuario.rol === 'Medico') {
+          localStorage.setItem('medicoId', usuario._id);
+        }
+
+        // Navegar según el rol
+        switch (usuario.rol) {
+          case 'Paciente':
+            this.router.navigate(['/paciente']);
+            break;
+          case 'Consultorio':
+            this.router.navigate(['/consultorio']);
+            break;
+          case 'Medico':
+            this.router.navigate(['/medico']);
+            break;
+          default:
+            alert('Rol no reconocido.');
+            break;
         }
       },
       error: (err) => {
@@ -46,5 +49,5 @@ export class LoginComponent {
         alert('Correo o contraseña inválidos.');
       }
     });
-  }    
+  }
 }

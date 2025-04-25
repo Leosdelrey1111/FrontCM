@@ -1,21 +1,155 @@
+/* Contenedor General */
 .container {
-    max-width: 900px;
-  }
-  
-  .card {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-  }
-  
-  h2 {
-    font-weight: bold;
-  }
-  
-  h5 {
-    margin-bottom: 1rem;
-  }
-  
-  button {
-    min-width: 80px;
-  }
-  
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #333;
+  background-color: #f9f9fb;
+}
+
+/* Títulos */
+h2, h5 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Tabla de Historial */
+.table {
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.table th {
+  background-color: #4a90e2;
+  color: white;
+  text-align: center;
+  font-weight: 500;
+  padding: 14px;
+}
+
+.table td {
+  text-align: center;
+  padding: 12px;
+  vertical-align: middle;
+  color: #444;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Botones */
+.btn {
+  transition: all 0.2s ease-in-out;
+  font-size: 0.875rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
+
+.btn-warning {
+  background-color: #f0ad4e;
+  color: #fff;
+  border: none;
+}
+
+.btn-warning:hover {
+  background-color: #ec971f;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-success {
+  background-color: #27ae60;
+  color: #fff;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #219150;
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: #fff;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #7f8c8d;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Inputs dentro del modal */
+.modal-content form label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  display: block;
+  color: #2c3e50;
+}
+
+.modal-content form input,
+.modal-content form select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 5px;
+  margin-bottom: 1rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* Botones del modal alineados */
+.modal-content .d-flex {
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+  gap: 10px;
+}

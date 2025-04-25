@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+
+export interface Disponibilidad {
+  fecha: string;
+  dia:   string;
+  slots: string[];
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -14,8 +20,10 @@ export class CitasService {
   // Método actualizado para obtener citas por usuario
   // citas.service.ts
   obtenerCitasPorUsuario(usuarioId: string): Observable<any> {
+    console.log('Obteniendo citas para el usuario: ', usuarioId); // Verifica la solicitud aquí
     return this.http.get(`${this.apiUrl}/usuario/${usuarioId}`);
   }
+  
 
   // Resto de métodos manteniendo consistencia en los nombres
   obtenerCitas(): Observable<any> {
@@ -30,7 +38,24 @@ export class CitasService {
   editarCita(id: string, datos: any) {
     return this.http.put<any>(`http://localhost:3000/api/citas/${id}`, datos);
   }
+
   
+  obtenerDisponibilidad(
+    medicoId: string,
+    startDate?: string,
+    endDate?: string,
+    slotDuration?: number
+  ): Observable<{ disponibilidad: Disponibilidad[] }> {
+    let params = new HttpParams();
+    if (startDate)    params = params.set('startDate', startDate);
+    if (endDate)      params = params.set('endDate',   endDate);
+    if (slotDuration) params = params.set('slotDuration', slotDuration.toString());
+
+    return this.http.get<{ disponibilidad: Disponibilidad[] }>(
+      `${this.apiUrl}/disponibilidad/${medicoId}`,
+      { params }
+    );
+  }
 
   eliminarCita(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
