@@ -1,0 +1,194 @@
+:host {
+  --primary-color: #2A5C82;
+  --secondary-color: #5BA4E6;
+  --success-color: #28A745;
+  --warning-color: #FFC107;
+  --danger-color: #DC3545;
+}
+
+/* Filtro */
+.filter-card {
+  background: #ffffff;
+  border: 1px solid #e3e6ec;
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding-bottom: 2%;
+}
+
+.input-group-medical {
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+}
+
+.input-group-medical:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(42, 92, 130, 0.2);
+}
+
+.input-group-medical .form-select,
+.input-group-medical .form-control {
+  border: none;
+  background: transparent;
+  height: 48px;
+  font-size: 0.95rem;
+  padding-left: 0.75rem;
+}
+
+.input-group-medical .form-select:focus,
+.input-group-medical .form-control:focus {
+  box-shadow: none;
+}
+
+/* Lista de citas */
+.citas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.cita-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.cita-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-inner {
+  padding: 1.8rem;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.especialidad {
+  color: var(--primary-color);
+  font-weight: bold;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  color: #495057;
+}
+
+.info-item i {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  width: 26px;
+  text-align: center;
+}
+
+.card-actions {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Botón de semana (outline) */
+.btn-outline-week {
+  background-color: white;
+  color: var(--primary-color);
+  border: 2px dashed var(--primary-color);
+  padding: 12px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.btn-outline-week:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* Botón de reset */
+.btn-reset {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+  background-color: #4c94d6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+.button-group {
+  display: flex; /* Hace que los botones estén en línea */
+  gap: 16px; /* Espacio entre los botones */
+  justify-content: center; /* Opcional: centra el grupo */
+  align-items: center;
+  margin-top: 20px; /* Opcional: separación hacia arriba */
+}
+
+.btn-success-custom {
+  background-color: var(--success-color);
+  border: 1px solid transparent;
+  color: white;
+  padding: 12px 24px; /* Aumenta el espacio interno (arriba/abajo 12px, izquierda/derecha 24px) */
+  font-size: 15px; /* Aumenta el tamaño de la letra */
+  border-radius: 8px; /* Opcional: bordes más redondeados */
+  transition: background-color 0.3s ease;
+}
+
+.btn-success-custom:hover {
+  background-color: #218838;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate__fadeInUp {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.card-animation {
+  animation: cardEnter 0.5s ease;
+}

@@ -1,22 +1,104 @@
-<div class="home-container">
-    <header class="clinic-info">
-      <h1>Bienvenido a la Clínica Salud y Bienestar</h1>
-      <p>Tu salud es nuestra prioridad. Brindamos atención médica especializada para ti y tu familia.</p>
-      <p>Contamos con los mejores médicos, tecnología de vanguardia y un ambiente cómodo para tu bienestar.</p>
-    </header>
-  
-    <section class="clinic-services">
-      <h2>Servicios Disponibles</h2>
-      <ul>
-        <li>Consultas médicas generales</li>
-        <li>Especialidades en cardiología, dermatología, pediatría, y más</li>
-        <li>Emergencias 24/7</li>
-        <li>Consultas virtuales</li>
-      </ul>
-    </section>
-  
-    <section class="login-section">
-      <button class="login-button" (click)="goToLogin()">Iniciar Sesión</button>
-    </section>
-  </div>
-  
+<div class="medical-home">
+  <!-- Navbar Médica Simplificada -->
+  <nav class="medical-navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <a class="navbar-brand" href="#">
+          <span class="clinic-name">Clínica San Leo</span>
+        </a>
+        <button class="btn-login" (click)="goToLogin()">
+          <i class="bi bi-person-circle"></i>
+          <span>Login</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section Profesional -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="text-content">
+          <h1>Cuidado médico integral con calidez humana</h1>
+          <p class="subtitle">Más de dos décadas dedicadas a tu bienestar</p>
+          <div class="cta-buttons">
+            <button class="btn-cta">
+              <i class="bi bi-calendar2-check"></i>
+              Solicitar cita
+            </button>
+            <button class="btn-cta outline">
+              <i class="bi bi-telephone"></i>
+              Urgencias 24h
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios Médicos -->
+  <section class="services-section">
+    <div class="container">
+      <h2 class="section-title">Nuestros servicios médicos</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <i class="bi bi-heart-pulse"></i>
+          <h3>Medicina General</h3>
+          <p>Primera consulta y seguimiento médico</p>
+        </div>
+        <div class="service-card">
+          <i class="bi bi-hospital"></i>
+          <h3>Especialidades</h3>
+          <p>Cardiología, Pediatría, Traumatología</p>
+        </div>
+        <div class="service-card">
+          <i class="bi bi-capsule"></i>
+          <h3>Farmacia Clínica</h3>
+          <p>Dispensación de medicamentos controlados</p>
+        </div>
+        <div class="service-card">
+          <i class="bi bi-laptop"></i>
+          <h3>Telemedicina</h3>
+          <p>Consultas virtuales desde cualquier lugar</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Profesional -->
+  <footer class="medical-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Contacto</h4>
+          <ul class="contact-info">
+            <li><i class="bi bi-geo-alt"></i> Av. Medicina 456, Ciudad Salud</li>
+            <li><i class="bi bi-telephone"></i> +34 912 345 678</li>
+            <li><i class="bi bi-envelope"></i> contactoclinicasalud.com</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Horarios</h4>
+          <ul class="opening-hours">
+            <li>Lunes-Viernes: 8:00 - 20:00</li>
+            <li>Sábados: 9:00 - 14:00</li>
+            <li>Urgencias: 24/7</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul class="legal-links">
+            <li><a href="#">Política de privacidad</a></li>
+            <li><a href="#">Aviso legal</a></li>
+            <li><a href="#">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>© 2024 Clínica Salud. Todos los derechos reservados</p>
+        <div class="accreditations">
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

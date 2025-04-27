@@ -11,14 +11,18 @@ import { PacienteLayoutComponentComponent } from './paciente-layout-component/pa
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
     PerfilComponent,
     AgendarCitaComponent,
     HistorialComponent,
-    PacienteLayoutComponentComponent
+    PacienteLayoutComponentComponent,
   ],
   imports: [
     CommonModule,
@@ -27,7 +31,14 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatIconModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatIconModule,
+    MatDatepicker,
+    MatDatepickerModule,
+    MatNativeDateModule,
     
 
   ]

@@ -17,14 +17,38 @@ export class LoginComponent {
   iniciarSesion() {
     this.authService.iniciarSesion({ correo: this.correo, contraseña: this.contrasenia }).subscribe({
       next: (res) => {
-        // Guardar los datos del usuario en localStorage
-        localStorage.setItem('usuario', JSON.stringify(res.usuario));
-  
-        const rol = res.usuario.rol;
-        if (rol === 'Paciente') {
-          this.router.navigate(['/paciente']);
-        } else if (rol === 'Consultorio') {
-          this.router.navigate(['/consultorio']);
+        const usuario = res.usuario;
+        console.log('Respuesta del servidor:', usuario);
+
+        // Guardar los datos del usuario (incluye nombreCompleto) en localStorage
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+
+        // Guardar ID del médico si aplica
+        if (usuario.rol === 'Medico') {
+          localStorage.setItem('medicoId', usuario._id);
+        }
+           // Guardar ID del médico si aplica
+        if (usuario.rol === 'Médico') {
+          localStorage.setItem('medicoId', usuario._id);
+        }
+
+        // Navegar según el rol
+        switch (usuario.rol) {
+          case 'Paciente':
+            this.router.navigate(['/paciente']);
+            break;
+          case 'Consultorio':
+            this.router.navigate(['/consultorio']);
+            break;
+          case 'Medico':
+            this.router.navigate(['/medico']);
+            break;
+          case 'Médico':
+            this.router.navigate(['/medico']);
+            break;
+          default:
+            alert('Rol no reconocido.');
+            break;
         }
       },
       error: (err) => {

@@ -1,200 +1,236 @@
 import { Component, OnInit } from '@angular/core';
-import { CitasService } from '../../services/citas.service';
+import { CitasService, Disponibilidad } from '../../services/citas.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-agendar-cita',
-  templateUrl: './agendar-cita.component.html'
+  templateUrl: './agendar-cita.component.html',
+  styleUrls: ['./agendar-cita.component.css']
 })
 export class AgendarCitaComponent implements OnInit {
-  // Variables corregidas y mejoradas
-  pacienteId: string = '';
-  especialidad: string = '';
-  medicoId: string = '';
-  medico: any = null;
-  diaSeleccionado: string = '';
-  hora: string = '';
-  motivo: string = '';
-  estado: string = 'Pendiente';
+  pacienteId          = '';
+  nombreUsuario       = '';
+  especialidad        = '';
+  medicoId            = '';
+  medico: any         = null;
+  disponibilidad: Disponibilidad[] = [];
+  fechaSeleccionadaIso = '';
+  horasDisponibles     : string[] = [];
+  hora    = '';
+  motivo  = '';
+  estado  = 'Pendiente';
 
   especialidades: any[] = [];
   todosLosMedicos: any[] = [];
   medicosFiltrados: any[] = [];
-  diasDisponibles: string[] = [];
-  horasDisponibles: string[] = [];
-  nombreUsuario: string = '';
+  camposCompletos: boolean = false;
 
-  constructor(private citasService: CitasService, private router: Router) {}
+  constructor(
+    private citasService: CitasService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.cargarDatosIniciales();
     this.obtenerUsuarioActual();
   }
 
-  cargarDatosIniciales() {
+  private cargarDatosIniciales() {
     this.citasService.getEspecialidades().subscribe({
-      next: (data) => this.especialidades = data,
-      error: (err) => console.error('Error cargando especialidades:', err)
+      next: data => this.especialidades = data,
+      error: err => console.error(err)
     });
-
     this.citasService.getMedicos().subscribe({
-      next: (data) => this.todosLosMedicos = data,
-      error: (err) => console.error('Error cargando médicos:', err)
+      next: data => this.todosLosMedicos = data,
+      error: err => console.error(err)
     });
   }
 
-  obtenerUsuarioActual() {
-    const user = JSON.parse(localStorage.getItem('usuario') || '{}');
-    this.pacienteId = user?._id || '';
-    this.nombreUsuario = user?.nombreCompleto || '';
+  verificarCamposCompletos() {
+    this.camposCompletos = !!(this.especialidad && this.medicoId && this.fechaSeleccionadaIso && this.hora);
   }
 
-  seleccionarEspecialidad(especialidad: string) {
-    this.resetearCampos();
-    this.especialidad = especialidad;
-    this.medicosFiltrados = this.todosLosMedicos.filter(m => m.especialidad === especialidad);
+  onCampoChange() {
+    this.verificarCamposCompletos();
   }
 
-  seleccionarMedico(medicoId: string) {
-    this.medico = this.medicosFiltrados.find(m => m._id === medicoId);
-    if (this.medico) {
-      this.diasDisponibles = this.medico.diasLaborales;
-      if (this.diasDisponibles.length === 0) {
-        alert('El médico no tiene días disponibles');
-      }
-    }
+  private obtenerUsuarioActual() {
+    const raw = localStorage.getItem('usuario') || '{}';
+    const user = JSON.parse(raw);
+    this.pacienteId    = user._id || '';
+    this.nombreUsuario = user.nombreCompleto || '';
   }
 
-  seleccionarDia(dia: string) {
-    this.diaSeleccionado = dia;
-    this.generarHorasDisponibles();
+  seleccionarEspecialidad(esp: string) {
+    this.especialidad         = esp;
+    this.medicoId             = '';
+    this.medico               = null;
+    this.disponibilidad       = [];
+    this.fechaSeleccionadaIso = '';
+    this.horasDisponibles     = [];
+    this.medicosFiltrados = this.todosLosMedicos.filter(m => m.especialidad === esp);
   }
 
-  private resetearCampos() {
-    this.medicoId = '';
-    this.diaSeleccionado = '';
-    this.hora = '';
-    this.diasDisponibles = [];
+  seleccionarMedico(id: string) {
+    this.medicoId = id;
+    this.medico = this.medicosFiltrados.find(m => m._id === id);
+    this.disponibilidad = [];
     this.horasDisponibles = [];
-  }
-
-  private generarHorasDisponibles() {
-    if (!this.medico || !this.medico.horario) return;
     
-    try {
-      const [horaInicio, minutosInicio] = this.medico.horario.inicio.split(':').map(Number);
-      const [horaFin, minutosFin] = this.medico.horario.fin.split(':').map(Number);
-      
-      this.horasDisponibles = [];
-      for (let h = horaInicio; h < horaFin; h++) {
-        this.horasDisponibles.push(`${h.toString().padStart(2, '0')}:00`);
-        if (h < horaFin - 1 || minutosFin >= 30) {
-          this.horasDisponibles.push(`${h.toString().padStart(2, '0')}:30`);
-        }
+    if (!this.medico) return;
+  
+    const startDate = new Date().toISOString().split('T')[0];
+    const endDate = new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0];
+  
+    this.citasService.obtenerDisponibilidad(id, startDate, endDate).subscribe({
+      next: resp => {
+        this.disponibilidad = resp.disponibilidad;
+        this.resaltarDiasDisponiblesEnCalendario();
+      },
+      error: err => {
+        console.error(err);
+        alert('Error cargando disponibilidad');
       }
-    } catch (error) {
-      console.error('Error generando horarios:', error);
-      this.horasDisponibles = [];
-    }
-  }
-
-  obtenerFechaCompleta(dia: string): string {
-    const diasSemana: { [key: string]: number } = {
-      'domingo': 0, 'lunes': 1, 'martes': 2, 
-      'miércoles': 3, 'jueves': 4, 'viernes': 5, 
-      'sábado': 6
-    };
-
-    const hoy = new Date();
-    const diaNormalizado = dia.toLowerCase()
-                             .normalize("NFD")
-                             .replace(/[\u0300-\u036f]/g, "")
-                             .replace(/^[áéíóú]/g, '');
-
-    if (!diasSemana.hasOwnProperty(diaNormalizado)) {
-      throw new Error('Día no válido');
-    }
-
-    const diaDeseado = diasSemana[diaNormalizado];
-    const diaHoyUTC = hoy.getUTCDay();
-
-    let diferenciaDias = diaDeseado - diaHoyUTC;
-    if (diferenciaDias < 0) diferenciaDias += 7;
-    
-    if (diferenciaDias === 0 && hoy.getUTCHours() >= 18) {
-      diferenciaDias = 7;
-    }
-
-    const fechaCita = new Date(hoy);
-    fechaCita.setUTCDate(hoy.getUTCDate() + diferenciaDias);
-    fechaCita.setUTCHours(0, 0, 0, 0);
-    
-    return fechaCita.toISOString();
+    });
   }
 
   confirmarCita() {
-    try {
-      if (!this.validarCampos()) {
-        alert('Complete todos los campos requeridos');
-        return;
-      }
-
-      const citaData = this.construirDatosCita();
-      console.log('Cita Data:', citaData);
-      this.verificarDisponibilidad(citaData);
-    } catch (error) {
-      console.error('Error en confirmación:', error);
-      alert('Error al procesar la solicitud');
+    if (!this.especialidad || !this.medicoId || !this.fechaSeleccionadaIso || !this.hora) {
+      alert('Complete todos los campos');
+      return;
     }
-  }
 
-  private validarCampos(): boolean {
-    return !!this.especialidad && !!this.medico && !!this.diaSeleccionado && !!this.hora;
-  }
-
-  private construirDatosCita() {
-    return {
-      paciente: this.pacienteId,
+    const citaData = {
+      paciente:     this.pacienteId,
       especialidad: this.especialidad,
-      medico: this.medico._id,
-      fecha: this.obtenerFechaCompleta(this.diaSeleccionado),
-      hora: this.hora,
-      motivo: this.motivo,
-      estado: this.estado
+      medico:       this.medicoId,
+      fecha:        this.fechaSeleccionadaIso,
+      hora:         this.hora,
+      motivo:       this.motivo,
+      estado:       this.estado
     };
-  }
 
-  private verificarDisponibilidad(citaData: any) {
-    this.citasService.obtenerCitasFiltradas({
-      medico: citaData.medico,
-      fecha: citaData.fecha
-    }).subscribe({
-      next: (citas) => {
-        if (citas.length >= this.medico.citasPorDia) {
-          alert('No hay disponibilidad para ese día');
-          return;
-        }
-        this.guardarCita(citaData);
-      },
-      error: (err) => {
-        console.error('Error verificando disponibilidad:', err);
-        alert('Error al verificar disponibilidad');
-      }
-    });   
-  }
-
-  private guardarCita(citaData: any) {
-    this.citasService.agendarCita(citaData).subscribe({
+    this.citasService.crearCita(citaData).subscribe({
       next: () => {
         alert('Cita agendada con éxito');
-        this.router.navigate(['/historial']);
+        this.router.navigate(['/paciente/historial']);
       },
       error: (err: HttpErrorResponse) => {
-        console.error('Error completo:', err);
-        const mensaje = err.error?.mensaje || err.message || 'Error desconocido';
-        alert(`Error: ${mensaje}`);
+        console.error(err);
+        alert(err.error.mensaje || 'Error al agendar cita');
       }
     });
   }
+
+  fechaSeleccionada: Date | null = null;
+  minDate: Date = new Date(); // Para que no puedan elegir fechas pasadas
+
+  filtrarFechasDisponibles = (fecha: Date | null): boolean => {
+    if (!fecha) return false;
+
+    // Filtrar solo las fechas de hoy en adelante
+    const fechaHoy = new Date();
+    const fechaStr = fecha.toISOString().split('T')[0]; // yyyy-mm-dd
+    if (fecha < fechaHoy) return false; // Solo mostrar fechas hoy o en adelante
+
+    const entry = this.disponibilidad.find(d => d.fecha === fechaStr);
+    if (entry) {
+      const availableSlots = entry.slots.length;
+      if (availableSlots > 3) {
+        this.setDateColor(fechaStr, 'green');
+      } else if (availableSlots >= 1 && availableSlots <= 2) {
+        this.setDateColor(fechaStr, 'yellow');
+      } else {
+        this.setDateColor(fechaStr, 'red');
+      }
+    }
+
+    return this.disponibilidad.some(d => d.fecha === fechaStr);
+  };
+
+  setDateColor(fecha: string, color: string) {
+    const dateElements = document.querySelectorAll(`.mat-calendar-body-cell[aria-label='${fecha}']`);
+    dateElements.forEach((el) => {
+      el.classList.remove('green', 'yellow', 'red'); // Eliminar colores anteriores
+      el.classList.add(color); // Aplicar el color correspondiente
+    });
+  }
+
+  onFechaChange() {
+    this.hora = '';
+    if (!this.fechaSeleccionada) return;
+
+    const fechaStr = this.fechaSeleccionada.toISOString().split('T')[0];
+    this.fechaSeleccionadaIso = fechaStr;
+    const entry = this.disponibilidad.find(d => d.fecha === fechaStr);
+
+    // Filtrar horas solo si la fecha seleccionada es hoy
+    if (entry) {
+      if (new Date(fechaStr).toISOString().split('T')[0] === new Date().toISOString().split('T')[0]) {
+        // Solo horas posteriores a la hora actual
+        const currentHour = new Date().getHours();
+        this.horasDisponibles = entry.slots.filter((hora: string) => {
+          const horaInt = parseInt(hora.split(':')[0], 10);
+          return horaInt >= currentHour;
+        });
+      } else {
+        this.horasDisponibles = entry.slots; // Para fechas futuras, se muestran todas las horas
+      }
+    } else {
+      this.horasDisponibles = [];
+    }
+  }
+
+  onDatepickerOpened(picker: any) {
+    this.resaltarDiasDisponiblesEnCalendario();
+  }
+  
+  private resaltarDiasDisponiblesEnCalendario() {
+    setTimeout(() => {
+      if (!this.disponibilidad) return;
+  
+      this.disponibilidad.forEach(d => {
+        const availableSlots = d.slots.length;
+        if (availableSlots > 3) {
+          this.setDateColor(d.fecha, 'green');
+        } else if (availableSlots >= 1 && availableSlots <= 3) {
+          this.setDateColor(d.fecha, 'yellow');
+        } else {
+          this.setDateColor(d.fecha, 'red');
+        }
+      });
+    }, 10);
+  }
+  cambiarMes(fechaMes: Date) {
+    if (!this.medicoId) return;
+    
+    const startDate = new Date(fechaMes.getFullYear(), fechaMes.getMonth(), 1);
+    const endDate = new Date(fechaMes.getFullYear(), fechaMes.getMonth() + 1, 0);
+  
+    this.citasService.obtenerDisponibilidad(
+      this.medicoId, 
+      startDate.toISOString().split('T')[0], 
+      endDate.toISOString().split('T')[0]
+    ).subscribe({
+      next: resp => {
+        this.disponibilidad = [...this.disponibilidad, ...resp.disponibilidad];
+        this.resaltarDiasDisponiblesEnCalendario();
+      },
+      error: err => console.error(err)
+    });
+  }
+  resaltarDiasDisponibles = (fecha: Date): string => {
+    const fechaStr = fecha.toISOString().split('T')[0];
+    const entry = this.disponibilidad.find(d => d.fecha === fechaStr);
+
+    if (entry) {
+      const slots = entry.slots.length;
+      if (slots > 3) return 'dia-verde';
+      if (slots >= 1 && slots <= 2) return 'dia-amarillo';
+      return 'dia-rojo';
+    }
+
+    return '';
+  };
 }

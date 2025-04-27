@@ -1,0 +1,22 @@
+<div *ngIf="medico" class="perfil-card">
+    <div class="perfil-header">
+      <div class="perfil-avatar">
+        <img src="https://media.istockphoto.com/id/1225961106/es/vector/doctor-icono-de-l%C3%ADnea-plana-ilustraci%C3%B3n-de-contorno-vectorial-del-m%C3%A9dico-masculino-en-escudo.jpg?s=612x612&w=0&k=20&c=WFssjdTRcxVqidWJDfnIzwyfVHjX7IA1ppAezwRMf14=" alt="Foto de perfil del médico" />
+      </div>
+      <h2>{{ medico.nombre }}</h2>
+      <p class="especialidad">{{ medico.especialidad }}</p>
+    </div>
+  
+    <div class="perfil-info">
+      <p><strong>Correo:</strong> {{ medico.correo }}</p>
+      <p><strong>Teléfono:</strong> {{ medico.telefono }}</p>
+      <p><strong>Días Laborales:</strong> {{ medico.diasLaborales.join(', ') }}</p>
+      <p><strong>Horario:</strong> {{ medico.horario.inicio }} - {{ medico.horario.fin }}</p>
+      <p><strong>Citas por Día:</strong> {{ medico.citasPorDia }}</p>
+    </div>
+  </div>
+  
+  <div *ngIf="!medico" class="perfil-loading">
+    <p>Cargando perfil...</p>
+  </div>
+  

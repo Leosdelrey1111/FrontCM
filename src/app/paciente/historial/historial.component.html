@@ -1,9 +1,77 @@
-<div class="container mt-4">
-  <h2>Historial de Citas</h2>
+<div class="container mt-5">
+  <h2 class="text-primary mb-4">Historial de Citas</h2>
 
-  <!-- Tabla de historial de citas -->
-  <table class="table table-striped mt-4">
-    <thead>
+<!-- Filtros -->
+<div class="filter-section">
+  <div class="row filter-row">
+    <!-- Filtro por mes -->
+    <div class="filter-group">
+      <label>Mes</label>
+      <input
+        type="month"
+        class="form-control"
+        [(ngModel)]="filtroMes"
+        (ngModelChange)="filtroSemana = null">
+    </div>
+
+    <!-- Filtro por semana -->
+    <div class="filter-group filter-action">
+      <button class="btn btn-filter" (click)="seleccionarSemana()">
+        Esta semana
+      </button>
+    </div>
+
+      <!-- Filtro por especialidad -->
+      <div class="filter-group">
+        <label>Especialidad</label>
+        <select
+          class="form-select"
+          [(ngModel)]="filtroEspecialidad">
+          <option value="">Todas las especialidades</option>
+          <option *ngFor="let esp of especialidades" [value]="esp.especialidad">
+            {{ esp.especialidad }}
+          </option>
+        </select>
+      </div>
+
+    <!-- Filtro por médico -->
+    <div class="filter-group">
+      <label>Médico</label>
+      <select
+        class="form-select"
+        [(ngModel)]="filtroMedico">
+        <option value="">Todos los médicos</option>
+        <option *ngFor="let medico of todosLosMedicos" [value]="medico._id">
+          {{ medico.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Filtro por estado -->
+    <div class="filter-group">
+      <label>Estado</label>
+      <select
+        class="form-select"
+        [(ngModel)]="filtroEstado">
+        <option value="">Todos los estados</option>
+        <option *ngFor="let estado of estadosPosibles" [value]="estado">
+          {{ estado }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Botón limpiar -->
+    <div class="filter-group filter-action">
+      <button class="btn btn-clear w-100" (click)="limpiarFiltros()">
+        <i class="bi bi-arrow-clockwise"></i> Limpiar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+  <table class="table table-hover shadow-sm rounded">
+    <thead class="table-primary">
       <tr>
         <th>Paciente</th>
         <th>Médico</th>
@@ -16,55 +84,123 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let cita of historial">
-        <td>{{ cita.paciente?.nombre }}</td>
-        <td>{{ cita.medico?.nombre }}</td>
-        <td>{{ cita.especialidad?.nombre || cita.especialidad }}</td>
-        <td>{{ cita.fecha | date: 'shortDate' }}</td>
+      <!-- Aquí usamos filteredHistorial en lugar de historial -->
+      <tr *ngFor="let cita of filteredHistorial">
+        <td>{{ cita.pacienteInfo?.nombreCompleto }}</td>
+        <td>{{ cita.medicoInfo?.nombre }}</td>
+        <td>{{ cita.especialidad }}</td>
+        <td>{{ cita.fecha | date:'shortDate' }}</td>
         <td>{{ cita.hora }}</td>
         <td>{{ cita.motivo || 'No especificado' }}</td>
-        <td>{{ cita.estado }}</td>
         <td>
-          <button class="btn btn-warning btn-sm me-1" (click)="editarCita(cita)">Editar</button>
-          <button class="btn btn-danger btn-sm" (click)="eliminarCita(cita._id)">Eliminar</button>
+          <span class="badge bg-warning text-dark"
+                *ngIf="cita.estado === 'Pendiente'">
+            {{ cita.estado }}
+          </span>
+          <span class="badge bg-success"
+                *ngIf="cita.estado !== 'Pendiente'">
+            {{ cita.estado }}
+          </span>
+        </td>
+        <td>
+          <div class="contenedor-botones">
+            <button class="btn btn-sm btn-outline-primary"
+                    (click)="editarCita(cita)"
+                    *ngIf="cita.estado === 'Pendiente'">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                    (click)="abrirConfirmacion(cita._id)"
+                    *ngIf="cita.estado === 'Pendiente'">
+              Cancelar
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <!-- Formulario de edición -->
-  <div *ngIf="citaEditando" class="card mt-4 p-3">
-    <h5>Editar Cita</h5>
-    <form [formGroup]="formularioEdicion" (ngSubmit)="guardarEdicion()">
-      <div class="mb-2">
-        <label>Fecha:</label>
-        <input type="date" class="form-control" formControlName="fecha">
-      </div>
-      <div class="mb-2">
-        <label>Hora:</label>
-        <input type="time" class="form-control" formControlName="hora">
-      </div>
-      <div class="mb-2">
-        <label>Motivo:</label>
-        <input type="text" class="form-control" formControlName="motivo">
-      </div>
-      <div class="mb-2">
-        <label>Médico:</label>
-        <select class="form-control" formControlName="medico">
-          <option *ngFor="let medico of medicos" [value]="medico._id">{{ medico.nombre }}</option>
-        </select>
-      </div>
-      <div class="mb-2">
-        <label>Especialidad:</label>
-        <select class="form-control" formControlName="especialidad">
-          <option *ngFor="let especialidad of especialidades" [value]="especialidad._id">{{ especialidad.nombre }}</option>
-        </select>
-      </div>
 
-      <div class="d-flex gap-2">
-        <button class="btn btn-success" type="submit">Guardar</button>
-        <button class="btn btn-secondary" type="button" (click)="cancelarEdicion()">Cancelar</button>
+
+  <!-- Modal Edición -->
+  <div class="modal-overlay" *ngIf="citaEditando">
+    <div class="modal-content modal-edicion">
+      <h5>Editar Cita</h5>
+      <form [formGroup]="formularioEdicion" (ngSubmit)="guardarEdicion()">
+        <!-- Especialidad -->
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+          <mat-label>Especialidad</mat-label>
+          <mat-select formControlName="especialidad" (selectionChange)="seleccionarEspecialidad()">
+            <mat-option *ngFor="let esp of especialidades" [value]="esp.especialidad">
+              {{ esp.especialidad }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Médico -->
+        <mat-form-field appearance="outline" class="w-100 mb-3" *ngIf="formularioEdicion.value.especialidad">
+          <mat-label>Médico</mat-label>
+          <mat-select formControlName="medico" (selectionChange)="seleccionarMedico()">
+            <mat-option *ngFor="let m of medicosFiltrados" [value]="m._id">
+              {{ m.nombre }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Fecha -->
+        <mat-form-field appearance="outline" class="w-100 mb-3" *ngIf="formularioEdicion.value.medico">
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="picker" 
+                [min]="minDate"
+                [matDatepickerFilter]="filtrarFechasDisponibles"
+                formControlName="fecha"
+                (dateChange)="onFechaChange()">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker 
+               (monthSelected)="cambiarMes($event)"
+               (opened)="onDatepickerOpened()"
+               [dateClass]="resaltarDiasDisponibles.bind(this)">
+</mat-datepicker>
+        </mat-form-field>
+
+        <!-- Hora -->
+        <mat-form-field appearance="outline" class="w-100 mb-3" *ngIf="horasDisponibles.length > 0">
+          <mat-label>Hora</mat-label>
+          <mat-select formControlName="hora">
+            <mat-option *ngFor="let h of horasDisponibles" [value]="h">
+              {{ h }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+
+        <!-- Motivo -->
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+          <mat-label>Motivo</mat-label>
+          <textarea matInput formControlName="motivo" rows="3"></textarea>
+        </mat-form-field>
+
+          <!-- Campos del formulario... -->
+          <div class="acciones-formulario">
+            <button class="btn-guardar" type="submit" [disabled]="!camposCompletos">
+              Guardar Cambios
+            </button>
+            <button class="btn-cancelar" type="button" (click)="cancelarEdicion()">
+              Cancelar
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
+
+  <!-- Modal Confirmación -->
+  <div class="modal-overlay" *ngIf="idCitaParaEliminar">
+    <div class="modal-content modal-confirmacion">
+      <h5>¿Estás seguro de cancelar esta cita?</h5>
+      <div class="botones-confirmacion">
+        <button class="btn-confirmar" (click)="confirmarEliminar()">Si</button>
+        <button class="btn-cancelar" (click)="cancelarEliminar()">Cancelar</button>
+      </div>
+    </div>
   </div>
 </div>
