@@ -4,6 +4,7 @@
   --success-color: #28A745;
   --warning-color: #FFC107;
   --danger-color: #DC3545;
+  --attended-color: #38e40d; /* Color para el modal atendida */
 }
 
 /* Filtro */
@@ -140,6 +141,7 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
+
 .button-group {
   display: flex; /* Hace que los botones estén en línea */
   gap: 16px; /* Espacio entre los botones */
@@ -191,4 +193,187 @@
 
 .card-animation {
   animation: cardEnter 0.5s ease;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+/* Modal Pro */
+.pro-modal {
+  background: linear-gradient(135deg, #f8f9ff, #ffffff);
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(74, 108, 247, 0.2);
+  transform: scale(0.8) rotate(-5deg);
+  opacity: 0;
+  animation: modalEntrance 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+  position: relative;
+  overflow: hidden;
+  width: 400px;
+  text-align: center;
+}
+
+@keyframes modalEntrance {
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.circle-svg {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 2rem;
+  filter: drop-shadow(0 4px 12px rgba(74, 108, 247, 0.15));
+}
+
+.circle-bg {
+  stroke: #e8f5e9;
+  stroke-width: 6;
+}
+
+.circle-main {
+  stroke: #4CAF50;
+  stroke-dasharray: 345;
+  stroke-dashoffset: 345;
+  transform-origin: center;
+  animation: 
+    circleDraw 1.2s cubic-bezier(0.65, 0, 0.45, 1) forwards,
+    circleRotate 1.5s linear infinite;
+}
+
+.circle-main.cancel {
+  stroke: #FF6B6B;
+}
+
+.circle-main.attended {
+  stroke: var(--attended-color);
+}
+
+@keyframes circleDraw {
+  0% { stroke-dashoffset: 345; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes circleRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dove {
+  stroke: #4CAF50;
+  stroke-width: 4;
+  fill: none;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: 
+    doveDraw 0.8s cubic-bezier(0.65, 0, 0.45, 1) forwards 0.8s,
+    doveFloat 2s ease-in-out infinite 1.6s;
+}
+
+.dove.cancel {
+  stroke: #FF6B6B;
+}
+
+.dove.attended {
+  stroke: var(--attended-color);
+}
+
+@keyframes doveDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes doveFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle at center, #4CAF50 30%, transparent 70%);
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  animation: particlePop 1.2s ease-out forwards 1s;
+}
+
+.particle.cancel {
+  background: radial-gradient(circle at center, #FF6B6B 30%, transparent 70%);
+}
+
+.particle.attended {
+  background: radial-gradient(circle at center, var(--attended-color) 30%, transparent 70%);
+}
+
+@keyframes particlePop {
+  0% {
+    opacity: 0;
+    transform: scale(0) translate(0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate(
+      calc((var(--x) - 50) * 1px), 
+      calc((var(--y) - 50) * 1px)
+    );
+  }
+}
+
+.success-title {
+  color: #2e7d32;
+  font-size: 1.8rem;
+  margin: 1.5rem 0 0.5rem;
+  font-weight: 700;
+  opacity: 0;
+  animation: textFadeIn 0.6s ease-out forwards 1.2s;
+}
+
+.success-title.cancel {
+  color: #FF6B6B;
+}
+
+.success-title.attended {
+  color: var(--attended-color);
+}
+
+.success-subtitle {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0;
+  animation: textFadeIn 0.6s ease-out forwards 1.4s;
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

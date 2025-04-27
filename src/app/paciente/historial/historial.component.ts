@@ -33,6 +33,7 @@ export class HistorialComponent implements OnInit {
   filtroMes: string = '';
   filtroSemana: { start: Date, end: Date } | null = null;
   estadosPosibles: string[] = ['Pendiente', 'Cancelada', 'Atendida'];
+Math: any;
 
   constructor(
     private citasService: CitasService,
@@ -186,38 +187,43 @@ export class HistorialComponent implements OnInit {
     });
   }
 
-  guardarEdicion() {
-    if (!this.citaEditando || !this.camposCompletos) return;
+// En el método guardarEdicion()
+guardarEdicion() {
+  if (!this.citaEditando || !this.camposCompletos) return;
 
-    const formValue = this.formularioEdicion.value;
-    const fechaHora = new Date(formValue.fecha);
-    const [hours, minutes] = formValue.hora.split(':');
-    fechaHora.setHours(+hours, +minutes);
+  const formValue = this.formularioEdicion.value;
+  const fechaHora = new Date(formValue.fecha);
+  const [hours, minutes] = formValue.hora.split(':');
+  fechaHora.setHours(+hours, +minutes);
 
-    const payload = {
-      paciente: this.citaEditando.paciente?._id || this.citaEditando.paciente,
-      medico: formValue.medico,
-      especialidad: formValue.especialidad,
-      fecha: fechaHora.toISOString().split('T')[0],
-      hora: formValue.hora,
-      motivo: formValue.motivo
-    };
+  const payload = {
+    paciente: this.citaEditando.paciente?._id || this.citaEditando.paciente,
+    medico: formValue.medico,
+    especialidad: formValue.especialidad,
+    fecha: fechaHora.toISOString().split('T')[0],
+    hora: formValue.hora,
+    motivo: formValue.motivo
+  };
 
-    this.citasService.editarCita(this.citaEditando._id, payload).subscribe({
-      next: (respuesta) => {
-        const index = this.historial.findIndex(c => c._id === this.citaEditando._id);
-        if (index !== -1) {
-          this.historial[index] = respuesta.cita;
-        }
-        alert('Cita actualizada correctamente.');
-        this.cancelarEdicion();
-      },
-      error: (err) => {
-        console.error(err);
-        alert(err.error?.mensaje || 'Error al actualizar la cita.');
+  this.citasService.editarCita(this.citaEditando._id, payload).subscribe({
+    next: (respuesta) => {
+      const index = this.historial.findIndex(c => c._id === this.citaEditando._id);
+      if (index !== -1) {
+        this.historial[index] = respuesta.cita;
       }
-    });
-  }
+      this.showEditSuccess = true;
+      setTimeout(() => {
+        this.showEditSuccess = false;
+        this.cancelarEdicion();
+      }, 2500);
+    },
+    error: (err) => {
+      console.error(err);
+      alert(err.error?.mensaje || 'Error al actualizar la cita.');
+    }
+  });
+}
+
 
   cancelarEdicion() {
     this.citaEditando = null;
@@ -294,22 +300,26 @@ export class HistorialComponent implements OnInit {
     this.idCitaParaEliminar = null;
   }
 
-  confirmarEliminar() {
-    if (!this.idCitaParaEliminar) return;
-  
-    this.citasService.cancelarCita(this.idCitaParaEliminar).subscribe({
-      next: () => {
-        const cita = this.historial.find(c => c._id === this.idCitaParaEliminar);
-        if (cita) cita.estado = 'Cancelada';
+// En el método confirmarEliminar()
+confirmarEliminar() {
+  if (!this.idCitaParaEliminar) return;
+
+  this.citasService.cancelarCita(this.idCitaParaEliminar).subscribe({
+    next: () => {
+      const cita = this.historial.find(c => c._id === this.idCitaParaEliminar);
+      if (cita) cita.estado = 'Cancelada';
+      this.showCancelSuccess = true;
+      setTimeout(() => {
+        this.showCancelSuccess = false;
         this.idCitaParaEliminar = null;
-        alert('Cita cancelada con éxito.');
-      },
-      error: (err) => {
-        console.error(err);
-        this.idCitaParaEliminar = null;
-      }
-    });
-  }
+      }, 2500);
+    },
+    error: (err) => {
+      console.error(err);
+      this.idCitaParaEliminar = null;
+    }
+  });
+}
 
   // Añade estos métodos
   onDatepickerOpened() {
@@ -374,4 +384,11 @@ cambiarMes(fechaMes: Date) {
     error: (err) => console.error(err)
   });
 }
+
+//confirmacion
+
+// Añade estas propiedades en el componente
+showEditSuccess: boolean = false;
+showCancelSuccess: boolean = false;
+
 }

@@ -100,7 +100,7 @@ export class AgendarCitaComponent implements OnInit {
       alert('Complete todos los campos');
       return;
     }
-
+  
     const citaData = {
       paciente:     this.pacienteId,
       especialidad: this.especialidad,
@@ -110,11 +110,14 @@ export class AgendarCitaComponent implements OnInit {
       motivo:       this.motivo,
       estado:       this.estado
     };
-
+  
     this.citasService.crearCita(citaData).subscribe({
       next: () => {
-        alert('Cita agendada con éxito');
-        this.router.navigate(['/paciente/historial']);
+        this.showSuccessModal = true; // Mostrar el modal
+        setTimeout(() => {
+          this.showSuccessModal = false; // Opcional: ocultarlo después
+          this.router.navigate(['/paciente/historial']);
+        }, 2500); // 2.5 segundos después redirigir
       },
       error: (err: HttpErrorResponse) => {
         console.error(err);
@@ -122,6 +125,7 @@ export class AgendarCitaComponent implements OnInit {
       }
     });
   }
+  
 
   fechaSeleccionada: Date | null = null;
   minDate: Date = new Date(); // Para que no puedan elegir fechas pasadas
@@ -233,4 +237,12 @@ export class AgendarCitaComponent implements OnInit {
 
     return '';
   };
+
+  // ||ALERTAS||//
+
+  showSuccessModal: boolean = false;
+// Agrega esta función en tu componente para las partículas
+get randomPosition() {
+  return Math.random() * 100 - 50;
+}
 }

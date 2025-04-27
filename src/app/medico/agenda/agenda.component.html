@@ -27,3 +27,48 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Éxito: Cita Confirmada -->
+<div class="modal-overlay" *ngIf="showSuccessModal">
+  <div class="modal-content pro-modal">
+    <div class="success-animation">
+      <svg class="circle-svg" viewBox="0 0 120 120">
+        <circle class="circle-bg" cx="60" cy="60" r="54" fill="none" />
+        <circle class="circle-main" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="6" />
+        <path class="dove" d="M40 65L50 75L80 45M60 55L65 50"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="particles">
+        <div *ngFor="let p of [1,2,3,4,5]" 
+             class="particle" 
+             [ngStyle]="{'--x': (Math.random() * 100), '--y': (Math.random() * 100)}">
+        </div>
+      </div>
+    </div>
+    <h2 class="success-title">¡Cita Confirmada!</h2>
+    <p class="success-subtitle">La cita fue registrada correctamente.</p>
+  </div>
+</div>
+
+<!-- Modal de Cancelación: Cita Cancelada -->
+<div class="modal-overlay" *ngIf="showCancelModal">
+  <div class="modal-content pro-modal">
+    <div class="success-animation">
+      <svg class="circle-svg" viewBox="0 0 120 120">
+        <circle class="circle-bg" cx="60" cy="60" r="54" fill="none" />
+        <circle class="circle-main cancel" cx="60" cy="60" r="54" fill="none" stroke-linecap="round" stroke-width="6" />
+        <path class="dove cancel" d="M45 45L75 75M75 45L45 75"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="particles">
+        <div *ngFor="let p of [1,2,3,4,5]" 
+             class="particle cancel" 
+             [ngStyle]="{'--x': (Math.random() * 100), '--y': (Math.random() * 100)}">
+        </div>
+      </div>
+    </div>
+    <h2 class="success-title cancel">¡Cita Cancelada!</h2>
+    <p class="success-subtitle">La cita ha sido cancelada exitosamente.</p>
+  </div>
+</div>
+

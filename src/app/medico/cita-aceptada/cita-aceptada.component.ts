@@ -17,6 +17,10 @@ export class CitaAceptadaComponent implements OnInit {
   filtroSemana: { start: Date, end: Date } | null = null;
 
   medicoId = '';
+  
+  // Propiedad para mostrar modal de éxito
+  showAttendedSuccess: boolean = false;
+  Math: any = Math; // Para usar Math en la plantilla
 
   constructor(private citasService: CitasService) {}
 
@@ -48,9 +52,17 @@ export class CitaAceptadaComponent implements OnInit {
   cambiarEstado(_id: string, nuevoEstado: string): void {
     this.citasService.actualizarEstadoCita(_id, nuevoEstado).subscribe({
       next: () => {
-        // Remover la cita de la lista al marcarla como atendida
-        this.historialOriginal = this.historialOriginal.filter(cita => cita._id !== _id);
-        this.citasPendientes = this.citasPendientes.filter(cita => cita._id !== _id);
+        // Mostrar modal de éxito
+        this.showAttendedSuccess = true;
+        
+        // Cerrar modal después de 2.5 segundos
+        setTimeout(() => {
+          this.showAttendedSuccess = false;
+          
+          // Remover la cita de la lista al marcarla como atendida
+          this.historialOriginal = this.historialOriginal.filter(cita => cita._id !== _id);
+          this.citasPendientes = this.citasPendientes.filter(cita => cita._id !== _id);
+        }, 2500);
       },
       error: err => console.error('Error al actualizar estado:', err)
     });

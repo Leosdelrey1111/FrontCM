@@ -1,8 +1,83 @@
 <div class="login-container">
   <div class="login-box">
-    <h2>Iniciar Sesión</h2>
-    <input type="email" [(ngModel)]="correo" placeholder="Correo" class="input-field">
-    <input type="password" [(ngModel)]="contrasenia" placeholder="Contraseña" class="input-field">
-    <button (click)="iniciarSesion()" class="btn">Ingresar</button>
+    <div class="login-header">
+      <div class="logo-circle">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15C15.866 15 19 12.3137 19 9C19 5.68629 15.866 3 12 3C8.13401 3 5 5.68629 5 9C5 12.3137 8.13401 15 12 15Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 20.4C3 18.1598 4.15979 16.0899 6.10051 14.6649C7.77656 13.4323 9.81582 12.75 12 12.75C14.1842 12.75 16.2234 13.4323 17.8995 14.6649C19.8402 16.0899 21 18.1598 21 20.4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Iniciar Sesión</h2>
+      <p class="subtitle">Ingrese sus credenciales para continuar</p>
+    </div>
+
+    <div class="form-container">
+      <div class="input-container">
+        <div class="input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6ZM20 6L12 11L4 6H20ZM20 18H4V8L12 13L20 8V18Z" fill="#A0AEC0"/>
+          </svg>
+        </div>
+        <input type="email" [(ngModel)]="correo" placeholder="Correo electrónico" class="input-field" [ngClass]="{'input-error': correoInvalido}">
+      </div>
+      
+      <div class="input-container">
+        <div class="input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" fill="#A0AEC0"/>
+            <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <input type="password" [(ngModel)]="contrasenia" placeholder="Contraseña" class="input-field" [ngClass]="{'input-error': contraseniaInvalida}">
+      </div>
+      
+      <div class="options-row">
+        <div class="remember-me">
+          <input type="checkbox" id="remember">
+          <label for="remember">Recordarme</label>
+        </div>
+        <a href="#" class="forgot-password">¿Olvidó su contraseña?</a>
+      </div>
+      
+      <button (click)="iniciarSesion()" class="btn login-btn">
+        <span>Iniciar sesión</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 5L19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="login-footer">
+      <div class="divider">
+        <span>o continúe con</span>
+      </div>
+      
+      <div class="social-buttons">
+        <button class="social-btn google">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.501 12.2332C22.501 11.3699 22.4296 10.7399 22.2748 10.0865H12.2153V13.9832H18.12C18.001 14.9515 17.3582 16.4099 15.9296 17.3898L15.9096 17.5203L19.0902 19.935L19.3106 19.9565C21.3339 18.1249 22.501 15.4298 22.501 12.2332Z" fill="#4285F4"/>
+            <path d="M12.214 22.5C15.1068 22.5 17.5353 21.5666 19.3092 19.9567L15.9282 17.3899C15.0235 18.0083 13.8092 18.4399 12.214 18.4399C9.38069 18.4399 6.96903 16.6083 6.0854 14.0766L5.96142 14.0871L2.67069 16.5954L2.62109 16.7132C4.38383 20.1433 8.01578 22.5 12.214 22.5Z" fill="#34A853"/>
+            <path d="M6.08538 14.0767C5.89681 13.4234 5.78967 12.7233 5.78967 12C5.78967 11.2767 5.89681 10.5767 6.07395 9.92337L6.06852 9.78423L2.74257 7.24338L2.62106 7.28665C1.99681 8.71338 1.64538 10.3084 1.64538 12C1.64538 13.6917 1.99681 15.2866 2.62106 16.7133L6.08538 14.0767Z" fill="#FBBC05"/>
+            <path d="M12.214 5.55997C14.2255 5.55997 15.583 6.41163 16.3569 7.12335L19.3807 4.23C17.5235 2.53834 15.1068 1.5 12.214 1.5C8.01578 1.5 4.38383 3.85665 2.62109 7.28662L6.07399 9.92332C6.96903 7.39166 9.38069 5.55997 12.214 5.55997Z" fill="#EB4335"/>
+          </svg>
+        </button>
+        <button class="social-btn facebook">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07812V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z" fill="#1877F2"/>
+          </svg>
+        </button>
+        <button class="social-btn apple">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.0756 0C17.1507 0 17.2258 0 17.3009 0C17.4135 1.0984 17.0756 1.97737 16.6251 2.73051C16.1747 3.52091 15.424 4.27405 14.3611 4.35458C14.2485 3.25618 14.6239 2.41446 15.0744 1.66132C15.5624 0.870922 16.4007 0.160477 17.0756 0Z" fill="black"/>
+            <path d="M21.8662 17.6323C21.8662 17.6727 21.8662 17.7131 21.8662 17.7535C21.5284 18.9727 20.953 20.0306 20.3025 21.0078C19.7272 21.8495 19.0523 22.6911 18.0645 22.7315C17.1511 22.7719 16.8883 22.2148 15.7879 22.2148C14.65 22.2148 14.3496 22.7315 13.4738 22.7719C12.5604 22.8124 11.8104 21.8898 11.2351 21.0482C9.6589 18.9727 8.45844 15.1562 8.37579 12.3566C8.37579 12.2356 8.37579 12.1145 8.37579 11.9935C8.41314 9.79738 9.24591 7.92318 10.4464 6.9055C11.2726 6.18958 12.4355 5.67286 13.7359 5.67286C14.3863 5.67286 15.0987 5.75338 15.699 5.83391C16.2744 5.91444 16.8871 5.99496 17.3751 5.99496C17.7129 5.99496 18.0507 5.93459 18.3885 5.87422C19.3012 5.71317 20.2521 5.54759 21.0409 5.95159C22.1413 6.49866 22.8913 7.52644 23.3792 8.8362C22.3164 9.43327 21.5277 10.4207 21.5277 11.6803C21.5277 13.0304 22.3538 14.0986 23.3792 14.6859C22.9664 15.7137 22.5158 16.703 21.8662 17.6323Z" fill="black"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="signup-prompt">
+        ¿No tiene una cuenta? <a href="#" class="signup-link">Regístrese</a>
+      </div>
+    </div>
   </div>
 </div>

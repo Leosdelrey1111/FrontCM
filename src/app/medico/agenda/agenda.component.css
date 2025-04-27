@@ -114,3 +114,220 @@
 .card-animation {
   animation: cardEnter 0.5s ease;
 }
+
+
+/* Modal de Éxito Mejorado */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(42, 92, 130, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: bounceIn 0.8s ease;
+}
+
+/* Checkmark Circle */
+.checkmark-circle {
+  width: 100px;
+  height: 100px;
+  background: #28a745;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+  animation: popIn 0.6s ease forwards;
+}
+
+.checkmark-circle i {
+  font-size: 50px;
+  color: white;
+}
+
+/* Texto */
+.success-text {
+  color: var(--success-color);
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Animaciones */
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+
+/* Modal Pro */
+.pro-modal {
+  background: linear-gradient(135deg, #f8f9ff, #ffffff);
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(74, 108, 247, 0.2);
+  transform: scale(0.8) rotate(-5deg);
+  opacity: 0;
+  animation: modalEntrance 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+@keyframes modalEntrance {
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.circle-svg {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 2rem;
+  filter: drop-shadow(0 4px 12px rgba(74, 108, 247, 0.15));
+}
+
+.circle-bg {
+  stroke: #e8f5e9;
+  stroke-width: 6;
+}
+
+.circle-main {
+  stroke: #4CAF50;
+  stroke-dasharray: 345;
+  stroke-dashoffset: 345;
+  transform-origin: center;
+  animation: 
+    circleDraw 1.2s cubic-bezier(0.65, 0, 0.45, 1) forwards,
+    circleRotate 1.5s linear infinite;
+}
+
+@keyframes circleDraw {
+  0% { stroke-dashoffset: 345; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes circleRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dove {
+  stroke: #4CAF50;
+  stroke-width: 4;
+  fill: none;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: 
+    doveDraw 0.8s cubic-bezier(0.65, 0, 0.45, 1) forwards 0.8s,
+    doveFloat 2s ease-in-out infinite 1.6s;
+}
+
+@keyframes doveDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes doveFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle at center, #4CAF50 30%, transparent 70%);
+  border-radius: 50%;
+  animation: particlePop 1.2s ease-out forwards 1s;
+}
+
+@keyframes particlePop {
+  0% {
+    opacity: 0;
+    transform: scale(0) translate(0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate(
+      calc((random() * 100 - 50) * 1px), 
+      calc((random() * 100 - 50) * 1px)
+    );
+  }
+}
+
+.success-title {
+  color: #2e7d32;
+  font-size: 1.8rem;
+  margin: 1.5rem 0 0.5rem;
+  font-weight: 700;
+  opacity: 0;
+  animation: textFadeIn 0.6s ease-out forwards 1.2s;
+}
+
+.success-subtitle {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0;
+  animation: textFadeIn 0.6s ease-out forwards 1.4s;
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mejora del overlay */
+.modal-overlay {
+  background: radial-gradient(circle at center, rgba(76, 175, 80, 0.15), rgba(0, 0, 0, 0.6));
+  backdrop-filter: blur(4px);
+}
