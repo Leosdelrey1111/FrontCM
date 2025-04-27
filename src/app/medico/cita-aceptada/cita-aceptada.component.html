@@ -88,4 +88,27 @@
       </div>
     </div>
   </div>
+  
+  <!-- Modal Atendida Exitosa -->
+  <div class="modal-overlay" *ngIf="showAttendedSuccess">
+    <div class="modal-content pro-modal">
+      <div class="success-animation">
+        <svg class="circle-svg" viewBox="0 0 120 120">
+          <circle class="circle-bg" cx="60" cy="60" r="54" fill="none"/>
+          <circle class="circle-main attended" cx="60" cy="60" r="54" fill="none"
+                  stroke-linecap="round" stroke-width="6"/>
+          <path class="dove attended" d="M40 65L50 75L80 45"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="particles">
+          <div *ngFor="let p of [1,2,3,4,5]" 
+               class="particle attended" 
+               [ngStyle]="{'--x': (Math.random() * 100), '--y': (Math.random() * 100)}">
+          </div>
+        </div>
+      </div>
+      <h2 class="success-title attended">¡Cita Atendida!</h2>
+      <p class="success-subtitle">La cita ha sido marcada como atendida exitosamente</p>
+    </div>
+  </div>
 </div>
