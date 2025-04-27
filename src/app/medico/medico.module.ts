@@ -8,12 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CitaAceptadaComponent } from './cita-aceptada/cita-aceptada.component';
+import { PerfilComponent } from './perfil/perfil.component';
 
 @NgModule({
   declarations: [
     AgendaComponent,
     LayoutmedicoComponent,
-    CitaAceptadaComponent
+    CitaAceptadaComponent,
+    PerfilComponent
   ],
   imports: [
     CommonModule,

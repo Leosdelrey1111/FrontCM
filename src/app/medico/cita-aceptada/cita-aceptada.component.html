@@ -1,21 +1,91 @@
-<div class="citas-container">
-    <div *ngFor="let cita of citasPendientes">
-      <h3>Especialidad de atención: {{ cita.especialidad }}</h3>
-      <h2>Cita: </h2>
-      <div class="cita-card">
-        <p></p>
-        <p><strong>Paciente:</strong> {{ cita.pacienteNombre }}</p>
-        <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
-        <p><strong>Fecha:</strong> {{ cita.fecha | date: 'dd/MM/yyyy' }} a las {{ cita.hora }}</p>
-        <p><strong>Estado:</strong> {{ cita.estado }}</p>
-        <p><strong>Medico ID:</strong> {{ cita.medico }}</p>
-  
-        <!-- Botón para cambiar el estado a Confirmada -->
-       <!-- Botón para cambiar el estado a Confirmada -->
-       <button (click)="cambiarEstado(cita._id, 'Atendida')" style="background-color: green; color: white; margin-right: 10px;">Atendida</button>
-       
-  
+<div class="container my-5">
+  <!-- Sección de filtros -->
+  <div class="filter-section mb-5 animate__animated animate__fadeIn">
+    <div class="filter-card p-4 shadow rounded-4">
+      <div class="row g-4 align-items-end">
+
+        <!-- Filtro Paciente -->
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="form-label fw-bold text-primary">Nombre del Paciente</label>
+            <div class="input-group input-group-medical">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-person text-primary"></i>
+              </span>
+              <select class="form-select border-start-0" [(ngModel)]="filtroPaciente">
+                <option value="">Todos los pacientes</option>
+                <option *ngFor="let paciente of pacientesConfirmados" [value]="paciente">
+                  {{ paciente }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtro Mes -->
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="form-label fw-bold text-primary">Seleccionar Mes</label>
+            <div class="input-group input-group-medical">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-calendar-month text-primary"></i>
+              </span>
+              <input
+                type="month"
+                class="form-control border-start-0"
+                [(ngModel)]="filtroMes"
+                (ngModelChange)="filtroSemana = null">
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón Esta semana -->
+        <div class="col-md-3">
+          <button class="btn btn-outline-week w-100 h-100 rounded-3 fw-semibold"
+                  (click)="seleccionarSemana()">
+            <i class="bi bi-calendar-week me-2"></i>Seleccionar Semana Actual
+          </button>
+        </div>
+
+        <!-- Botón Limpiar -->
+        <div class="col-md-2">
+          <button class="btn btn-reset w-100 h-100 rounded-3 fw-semibold"
+                  (click)="limpiarFiltros()">
+            <i class="bi bi-arrow-clockwise me-2"></i>Reiniciar Filtros
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
-  
+
+  <!-- Lista de citas -->
+  <div class="citas-container animate__animated animate__fadeInUp">
+    <div *ngFor="let cita of filteredCitas" class="cita-card" [@cardAnimation]>
+      <div class="card-inner">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="especialidad">{{ cita.especialidad }}</h5>
+          <span class="badge bg-info text-dark">Fecha: {{ cita.fecha | date:'dd/MM/yyyy' }}</span>
+        </div>
+
+        <div class="card-body">
+          <div class="info-item">
+            <strong><i class="bi bi-person"></i> Paciente: </strong> {{ cita.pacienteNombre }}
+          </div>
+          <div class="info-item">
+            <strong><i class="bi bi-chat-dots"></i> Motivo: </strong> {{ cita.motivo || 'Consulta general' }}
+          </div>
+          <div class="info-item">
+            <strong><i class="bi bi-clock"></i> Hora: </strong> {{ cita.hora }}
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-success-custom w-100 rounded-3 fw-semibold" (click)="cambiarEstado(cita._id, 'Atendida')">
+            <i class="bi bi-check-circle me-2"></i>Marcar como Atendida
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

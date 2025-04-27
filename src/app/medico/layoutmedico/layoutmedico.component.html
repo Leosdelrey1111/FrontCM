@@ -1,33 +1,49 @@
 <div class="main-container">
-    <header class="header">
-      <h1>Bienvenido, Dr. {{ usuarioNombre }}</h1>
-      <!-- <button mat-button (click)="logout()">Cerrar Sesión</button> -->
-    </header>
+  <header class="header">
+    <div class="header-content">
+      <div class="brand-section">
+        <h1 class="welcome-text">Bienvenido(a) Dr(a). {{ usuarioNombre }}</h1>
+      </div>
+      <div class="clinic-info">
+        <h2 class="clinic-name">Clínica Médica Integral Leo</h2>
+      </div>
+      <button class="logout-btn" mat-stroked-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="sidenav">
   
-    <nav class="sidenav">
-      <ul>
-        <li>
-          <a routerLink="/medico/agenda" routerLinkActive="active-link">
-            <mat-icon>calendar_today</mat-icon>
-            Gestionar Citas
-          </a>
-        </li>
-        <li>
-          <a routerLink="/medico/aceptar" routerLinkActive="active-link">
-            <mat-icon>history</mat-icon>
-            Citas aceptadas
-          </a>
-        </li>
-        <li>
-          <a routerLink="/medico/perfil" routerLinkActive="active-link">
-            <mat-icon>person</mat-icon>
-            Mi Perfil
-          </a>
-        </li>
-      </ul>
-    </nav>
-  
-    <main class="content">
+    <ul class="nav-menu">
+      <li>
+        <a routerLink="/medico/agenda" routerLinkActive="active-link">
+          <mat-icon class="nav-icon">event_available</mat-icon>
+          <span class="nav-label">Gestión de Citas</span>
+          <div class="active-indicator"></div>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/medico/aceptar" routerLinkActive="active-link">
+          <mat-icon class="nav-icon">assignment_turned_in</mat-icon>
+          <span class="nav-label">Citas Confirmadas</span>
+          <div class="active-indicator"></div>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/medico/medico-perfil" routerLinkActive="active-link">
+          <mat-icon class="nav-icon">badge</mat-icon>
+          <span class="nav-label">Perfil Médico</span>
+          <div class="active-indicator"></div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="content">
+    <div class="content-container">
       <router-outlet></router-outlet>
-    </main>
+    </div>
+  </main>
 </div>

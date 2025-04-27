@@ -9,14 +9,13 @@ import { CitasService } from '../../services/citas.service';
 })
 export class AgendaComponent implements OnInit {
   citasPendientes: any[] = [];
-  todosLosMedicos: any[] = [];  // Lista de médicos
-  medicoId: string = '';  // Definir la variable medicoId
+  medicoId: string = '';
 
   constructor(private citasService: CitasService) {}
 
   ngOnInit() {
     // Obtener el ID del médico desde el localStorage
-    this.medicoId = localStorage.getItem('medicoId') || '';  
+    this.medicoId = localStorage.getItem('medicoId') || '';
 
     // Si se encuentra el ID del médico, obtener sus citas
     if (this.medicoId) {
@@ -30,18 +29,26 @@ export class AgendaComponent implements OnInit {
     this.citasService.obtenerCitasPorMedico(medicoId).subscribe({
       next: (data) => {
         console.log('Citas recibidas:', data.citas);
-        this.citasPendientes = data.citas;
+        // Ordenamos por fecha ascendente (antiguas primero)
+        this.citasPendientes = data.citas
+          .slice() // para no mutar el array original
+          .sort((a: { fecha: string | number | Date; }, b: { fecha: string | number | Date; }) => {
+            const dateA = new Date(a.fecha).getTime();
+            const dateB = new Date(b.fecha).getTime();
+            return dateA - dateB;
+          });
       },
       error: (err) => {
         console.error('Error al obtener citas:', err);
       }
     });
   }
+
   cambiarEstado(_id: string, nuevoEstado: string): void {
     this.citasService.actualizarEstadoCita(_id, nuevoEstado).subscribe(
       (response) => {
         console.log('Estado actualizado:', response);
-        const cita = this.citasPendientes.find((cita) => cita._id === _id);
+        const cita = this.citasPendientes.find(c => c._id === _id);
         if (cita) {
           cita.estado = nuevoEstado;
         }

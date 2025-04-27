@@ -3,43 +3,39 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-
 export interface Disponibilidad {
+  horas: string[];
   fecha: string;
-  dia:   string;
+  dia: string;
   slots: string[];
 }
+
 @Injectable({
   providedIn: 'root',
 })
 export class CitasService {
   private apiUrl = `${environment.apiUrl}/citas`;
+  eliminarCita: any;
 
   constructor(private http: HttpClient) {}
 
-  // Método actualizado para obtener citas por usuario
-  // citas.service.ts
   obtenerCitasPorUsuario(usuarioId: string): Observable<any> {
-    console.log('Obteniendo citas para el usuario: ', usuarioId); // Verifica la solicitud aquí
+    console.log('Obteniendo citas para el usuario: ', usuarioId);
     return this.http.get(`${this.apiUrl}/usuario/${usuarioId}`);
   }
-  
 
-  // Resto de métodos manteniendo consistencia en los nombres
   obtenerCitas(): Observable<any> {
     return this.http.get(this.apiUrl);
   }
-
 
   crearCita(cita: any): Observable<any> {
     return this.http.post(this.apiUrl, cita);
   }
 
-  editarCita(id: string, datos: any) {
-    return this.http.put<any>(`http://localhost:3000/api/citas/${id}`, datos);
+  editarCita(id: string, datos: any): Observable<{ mensaje: string; cita: any }> {
+    return this.http.put<{ mensaje: string; cita: any }>(`${this.apiUrl}/${id}`, datos);
   }
 
-  
   obtenerDisponibilidad(
     medicoId: string,
     startDate?: string,
@@ -47,26 +43,31 @@ export class CitasService {
     slotDuration?: number
   ): Observable<{ disponibilidad: Disponibilidad[] }> {
     let params = new HttpParams();
-    if (startDate)    params = params.set('startDate', startDate);
-    if (endDate)      params = params.set('endDate',   endDate);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
     if (slotDuration) params = params.set('slotDuration', slotDuration.toString());
-
+  
     return this.http.get<{ disponibilidad: Disponibilidad[] }>(
       `${this.apiUrl}/disponibilidad/${medicoId}`,
       { params }
     );
   }
 
-  eliminarCita(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
-  }
+  // eliminarCita(id: string): Observable<any> {
+  //   return this.http.delete(`${this.apiUrl}/${id}`);
+  // }
+
+  // Reemplazar método eliminarCita por:
+cancelarCita(id: string): Observable<any> {
+  return this.http.patch(`${this.apiUrl}/cancelar/${id}`, {});
+}
 
   getEspecialidades(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/especialidades`);
   }
 
   getMedicos(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/medicos`);  // Corrección: interpolación con backticks
+    return this.http.get(`${environment.apiUrl}/medicos`);
   }
 
   obtenerCitasPendientes(): Observable<any> {
@@ -78,21 +79,18 @@ export class CitasService {
   }
 
   obtenerCitasPorMedico(medicoId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/citasmedico/${medicoId}`);
-  } 
+    return this.http.get(`${this.apiUrl}/citasmedico/${medicoId}`);
+  }
+
   obtenerCitasPorMedicoAceptada(medicoId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/citasmedicoa/${medicoId}`);
-  }   
+    return this.http.get(`${this.apiUrl}/citasmedicoa/${medicoId}`);
+  }
 
-  // Ejemplo de implementación en el servicio de CitasService
-obtenerCitasFiltradas(filtros: any) {
-  return this.http.get<any[]>('/api/citas', { params: filtros });
+  obtenerCitasFiltradas(filtros: any): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl, { params: filtros });
+  }
+
+  agendarCita(cita: any): Observable<any> {
+    return this.crearCita(cita);
+  }
 }
-
-agendarCita(cita: any): Observable<any> {
-  return this.crearCita(cita);
-}
-
-
-}
-

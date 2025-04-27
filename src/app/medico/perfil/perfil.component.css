@@ -1,0 +1,65 @@
+.perfil-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 480px;
+    margin: 2rem auto;
+    animation: fadeInUp 0.8s ease-out;
+    text-align: center;
+  }
+  
+  .perfil-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .perfil-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-card h2 {
+    color: #2A5C82;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .especialidad {
+    font-size: 1rem;
+    color: #607d8b;
+    margin-bottom: 1rem;
+  }
+  
+  .perfil-info p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    color: #555;
+    text-align: left;
+  }
+  
+  .perfil-info {
+    padding: 0 1rem;
+    text-align: left;
+  }
+  
+  .perfil-loading {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  /* Animación */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

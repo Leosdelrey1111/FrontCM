@@ -1,22 +1,29 @@
 <div class="citas-container">
-  <div *ngFor="let cita of citasPendientes">
-    <h3>Especialidad de atención: {{ cita.especialidad }}</h3>
-    <h2>Cita: </h2>
-    <div class="cita-card">
-      <p></p>
-      <p><strong>Paciente:</strong> {{ cita.pacienteNombre }}</p>
-      <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
-      <p><strong>Fecha:</strong> {{ cita.fecha | date: 'dd/MM/yyyy' }} a las {{ cita.hora }}</p>
-      <p><strong>Estado:</strong> {{ cita.estado }}</p>
-      <p><strong>Medico ID:</strong> {{ cita.medico }}</p>
-
-      <!-- Botón para cambiar el estado a Confirmada -->
-     <!-- Botón para cambiar el estado a Confirmada -->
-     <button (click)="cambiarEstado(cita._id, 'Confirmada')" style="background-color: green; color: white; margin-right: 10px;">Aceptar</button>
-
-     <button (click)="cambiarEstado(cita._id, 'Cancelada')" style="background-color: red; color: white;">Cancelar</button>
-     
-
+  <div *ngFor="let cita of citasPendientes" class="cita-card card-animation">
+    <div class="card-inner">
+      <div class="card-header">
+        <h3 class="especialidad">Especialidad: {{ cita.especialidad }}</h3>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-user"></i> Paciente: {{ cita.pacienteNombre }}
+      </div>
+      <div class="info-item">
+        <i class="fas fa-notes-medical"></i> Motivo: {{ cita.motivo }}
+      </div>
+      <div class="info-item">
+        <i class="fas fa-calendar-alt"></i> Fecha: {{ cita.fecha | date:'dd/MM/yyyy' }} a las {{ cita.hora }}
+      </div>
+      <div class="info-item">
+        <i class="fas fa-info-circle"></i> Estado: {{ cita.estado }}
+      </div>
+      <div class="button-group">
+        <button class="btn-success-custom" (click)="cambiarEstado(cita._id, 'Confirmada')">
+          Aceptar
+        </button>
+        <button class="btn-reset" (click)="cambiarEstado(cita._id, 'Cancelada')">
+          Cancelar
+        </button>
+      </div>
     </div>
   </div>
 </div>

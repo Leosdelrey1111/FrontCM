@@ -27,6 +27,10 @@ export class LoginComponent {
         if (usuario.rol === 'Medico') {
           localStorage.setItem('medicoId', usuario._id);
         }
+           // Guardar ID del médico si aplica
+        if (usuario.rol === 'Médico') {
+          localStorage.setItem('medicoId', usuario._id);
+        }
 
         // Navegar según el rol
         switch (usuario.rol) {
@@ -37,6 +41,9 @@ export class LoginComponent {
             this.router.navigate(['/consultorio']);
             break;
           case 'Medico':
+            this.router.navigate(['/medico']);
+            break;
+          case 'Médico':
             this.router.navigate(['/medico']);
             break;
           default:

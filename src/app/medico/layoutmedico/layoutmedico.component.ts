@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-layoutmedico',
@@ -7,9 +8,18 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./layoutmedico.component.css']
 })
 export class LayoutmedicoComponent {
-  usuarioNombre: string = 'Usuario'; // Obtener el nombre del médico desde el servicio de autenticación
+  usuarioNombre: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      const usuarioData = JSON.parse(usuario);
+      this.usuarioNombre = usuarioData.nombreCompleto || 'Doctor';
+    }
+  }
 
- 
+  logout(): void {
+    localStorage.clear();
+    this.router.navigate(['/']);
+  }
 }

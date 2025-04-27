@@ -14,14 +14,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
     PerfilComponent,
     AgendarCitaComponent,
     HistorialComponent,
-    PacienteLayoutComponentComponent
+    PacienteLayoutComponentComponent,
   ],
   imports: [
     CommonModule,
@@ -35,6 +36,10 @@ import { MatInputModule } from '@angular/material/input';
     MatSelectModule,
     MatInputModule,
     MatIconModule,
+    MatDatepicker,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    
 
   ]
 })

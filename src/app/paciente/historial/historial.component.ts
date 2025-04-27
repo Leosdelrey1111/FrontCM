@@ -11,10 +11,28 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class HistorialComponent implements OnInit {
   historial: any[] = [];
+  historialOriginal: any[] = [];
   citaEditando: any = null;
   formularioEdicion: FormGroup;
-  medicos: any[] = [];
+  disponibilidad: any[] = [];
+  horasDisponibles: string[] = [];
+  fechaSeleccionada: Date | null = null;
+  minDate: Date = new Date();
+  todosLosMedicos: any[] = [];
+  medicosFiltrados: any[] = [];
   especialidades: any[] = [];
+  camposCompletos: boolean = false;
+  idCitaParaEliminar: string | null = null;
+
+  // Filtros
+  filtroEspecialidad = '';        // <-- nuevo filtro
+  filtroFecha: string = '';
+  filtroMedico: string = '';
+  filtroHora: string = '';
+  filtroEstado: string = '';
+  filtroMes: string = '';
+  filtroSemana: { start: Date, end: Date } | null = null;
+  estadosPosibles: string[] = ['Pendiente', 'Cancelada', 'Atendida'];
 
   constructor(
     private citasService: CitasService,
@@ -23,8 +41,8 @@ export class HistorialComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.formularioEdicion = this.fb.group({
-      medico: [''],
       especialidad: [''],
+      medico: [''],
       fecha: [''],
       hora: [''],
       motivo: ['']
@@ -37,13 +55,27 @@ export class HistorialComponent implements OnInit {
       this.obtenerCitas(usuario._id);
     }
 
-    this.obtenerMedicos();
+    this.obtenerTodosMedicos();
     this.obtenerEspecialidades();
+
+    this.formularioEdicion.valueChanges.subscribe(() => {
+      this.verificarCamposCompletos();
+    });
+  }
+
+  verificarCamposCompletos() {
+    this.camposCompletos = !!(
+      this.formularioEdicion.value.especialidad &&
+      this.formularioEdicion.value.medico &&
+      this.formularioEdicion.value.fecha &&
+      this.formularioEdicion.value.hora
+    );
   }
 
   obtenerCitas(usuarioId: string) {
     this.citasService.obtenerCitasPorUsuario(usuarioId).subscribe({
       next: (citas) => {
+        this.historialOriginal = [...citas];
         this.historial = citas;
       },
       error: (err) => {
@@ -52,10 +84,10 @@ export class HistorialComponent implements OnInit {
     });
   }
 
-  obtenerMedicos() {
+  obtenerTodosMedicos() {
     this.medicosService.obtenerMedicos().subscribe({
       next: (medicos) => {
-        this.medicos = medicos;
+        this.todosLosMedicos = medicos;
       },
       error: (err) => {
         console.error(err);
@@ -74,33 +106,115 @@ export class HistorialComponent implements OnInit {
     });
   }
 
+  seleccionarEspecialidad() {
+    const especialidad = this.formularioEdicion.value.especialidad;
+    this.medicosFiltrados = this.todosLosMedicos.filter(m => m.especialidad === especialidad);
+    this.formularioEdicion.patchValue({ medico: '' });
+    this.disponibilidad = [];
+    this.horasDisponibles = [];
+  }
+
+  seleccionarMedico() {
+    const medicoId = this.formularioEdicion.value.medico;
+    if (!medicoId) return;
+
+    const startDate = new Date().toISOString().split('T')[0];
+    const endDate = new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0];
+
+    this.citasService.obtenerDisponibilidad(medicoId, startDate, endDate).subscribe({
+      next: (resp: any) => {
+        this.disponibilidad = resp.disponibilidad;
+        this.resaltarDiasDisponiblesEnCalendario();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  filtrarFechasDisponibles = (fecha: Date | null): boolean => {
+    if (!fecha) return false;
+    const fechaStr = fecha.toISOString().split('T')[0];
+    return this.disponibilidad.some((d: any) => d.fecha === fechaStr);
+  };
+
+  onFechaChange() {
+    const fecha = this.formularioEdicion.value.fecha;
+    if (!fecha) return;
+
+    const fechaStr = fecha.toISOString().split('T')[0];
+    
+    const entry = this.disponibilidad.find((d: any) => {
+      const disponibilidadDate = new Date(d.fecha).toISOString().split('T')[0];
+      return disponibilidadDate === fechaStr;
+    });
+
+    if (entry) {
+      const hoy = new Date();
+      if (fecha.toDateString() === hoy.toDateString()) {
+        const currentHour = hoy.getHours();
+        this.horasDisponibles = entry.slots.filter((h: string) => {
+          const [horas] = h.split(':');
+          return parseInt(horas, 10) >= currentHour;
+        });
+      } else {
+        this.horasDisponibles = entry.slots;
+      }
+    } else {
+      this.horasDisponibles = [];
+    }
+
+    this.formularioEdicion.patchValue({ hora: '' });
+  }
+
   editarCita(cita: any) {
     this.citaEditando = cita;
     this.formularioEdicion.patchValue({
-      medico: cita.medicoInfo?._id || '',
-      especialidad: cita.especialidadInfo?._id || '',
-      fecha: cita.fecha?.substring(0, 10) || '',
-      hora: cita.hora || '',
-      motivo: cita.motivo || ''
+      especialidad: cita.especialidad,
+      medico: cita.medicoInfo?._id,
+      fecha: new Date(cita.fecha),
+      hora: cita.hora,
+      motivo: cita.motivo
+    });
+
+    this.citasService.obtenerDisponibilidad(cita.medicoInfo._id).subscribe({
+      next: (resp: any) => {
+        this.disponibilidad = resp.disponibilidad;
+        this.medicosFiltrados = this.todosLosMedicos.filter(m => 
+          m.especialidad === cita.especialidad
+        );
+      },
+      error: (err) => console.error(err)
     });
   }
 
   guardarEdicion() {
-    if (!this.citaEditando) return;
+    if (!this.citaEditando || !this.camposCompletos) return;
 
-    const datosActualizados = this.formularioEdicion.value;
-    this.citasService.editarCita(this.citaEditando._id, datosActualizados).subscribe({
-      next: (actualizada) => {
+    const formValue = this.formularioEdicion.value;
+    const fechaHora = new Date(formValue.fecha);
+    const [hours, minutes] = formValue.hora.split(':');
+    fechaHora.setHours(+hours, +minutes);
+
+    const payload = {
+      paciente: this.citaEditando.paciente?._id || this.citaEditando.paciente,
+      medico: formValue.medico,
+      especialidad: formValue.especialidad,
+      fecha: fechaHora.toISOString().split('T')[0],
+      hora: formValue.hora,
+      motivo: formValue.motivo
+    };
+
+    this.citasService.editarCita(this.citaEditando._id, payload).subscribe({
+      next: (respuesta) => {
         const index = this.historial.findIndex(c => c._id === this.citaEditando._id);
         if (index !== -1) {
-          this.historial[index] = actualizada;
+          this.historial[index] = respuesta.cita;
         }
         alert('Cita actualizada correctamente.');
         this.cancelarEdicion();
       },
       error: (err) => {
         console.error(err);
-        alert('Error al actualizar la cita.');
+        alert(err.error?.mensaje || 'Error al actualizar la cita.');
       }
     });
   }
@@ -108,46 +222,156 @@ export class HistorialComponent implements OnInit {
   cancelarEdicion() {
     this.citaEditando = null;
     this.formularioEdicion.reset();
+    this.disponibilidad = [];
+    this.horasDisponibles = [];
+    this.medicosFiltrados = [];
   }
 
-  eliminarCita(citaId: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta cita?')) {
-      this.citasService.eliminarCita(citaId).subscribe({
-        next: () => {
-          this.historial = this.historial.filter(cita => cita._id !== citaId);
-          alert('Cita eliminada con éxito.');
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error al eliminar la cita.');
+  // Filtros
+  get filteredHistorial() {
+    return this.historialOriginal.filter(cita => {
+      const fechaCita = new Date(cita.fecha);
+
+      // Mes
+      const mesMatch = this.filtroMes
+        ? fechaCita.getFullYear() === +this.filtroMes.split('-')[0]
+          && fechaCita.getMonth() === (+this.filtroMes.split('-')[1] - 1)
+        : true;
+
+      // Semana
+      const semanaMatch = this.filtroSemana
+        ? fechaCita >= this.filtroSemana.start && fechaCita <= this.filtroSemana.end
+        : true;
+
+      // Especialidad
+      const espMatch = this.filtroEspecialidad
+        ? cita.especialidad === this.filtroEspecialidad
+        : true;
+
+      // Médico
+      const medicoMatch = this.filtroMedico
+        ? cita.medicoInfo?._id === this.filtroMedico
+        : true;
+
+      // Estado
+      const estadoMatch = this.filtroEstado
+        ? cita.estado === this.filtroEstado
+        : true;
+
+      return mesMatch && semanaMatch && espMatch && medicoMatch && estadoMatch;
+    });
+  }
+  limpiarFiltros() {
+    this.filtroEspecialidad = '';   // <-- reset
+    this.filtroFecha = '';
+    this.filtroMedico = '';
+    this.filtroHora = '';
+    this.filtroEstado = '';
+    this.filtroMes = '';
+    this.filtroSemana = null;
+    this.historial = [...this.historialOriginal];
+  }
+
+  seleccionarMes(event: any) {
+    this.filtroMes = event.target.value;
+    this.filtroSemana = null;
+  }
+
+  seleccionarSemana() {
+    const hoy = new Date();
+    const start = new Date(hoy.setDate(hoy.getDate() - hoy.getDay()));
+    const end = new Date(hoy.setDate(hoy.getDate() + 6));
+    this.filtroSemana = { start, end };
+    this.filtroMes = '';
+  }
+
+  abrirConfirmacion(citaId: string) {
+    this.idCitaParaEliminar = citaId;
+  }
+  
+
+  cancelarEliminar() {
+    this.idCitaParaEliminar = null;
+  }
+
+  confirmarEliminar() {
+    if (!this.idCitaParaEliminar) return;
+  
+    this.citasService.cancelarCita(this.idCitaParaEliminar).subscribe({
+      next: () => {
+        const cita = this.historial.find(c => c._id === this.idCitaParaEliminar);
+        if (cita) cita.estado = 'Cancelada';
+        this.idCitaParaEliminar = null;
+        alert('Cita cancelada con éxito.');
+      },
+      error: (err) => {
+        console.error(err);
+        this.idCitaParaEliminar = null;
+      }
+    });
+  }
+
+  // Añade estos métodos
+  onDatepickerOpened() {
+    this.resaltarDiasDisponiblesEnCalendario();
+  }
+
+  private resaltarDiasDisponiblesEnCalendario() {
+    setTimeout(() => {
+      if (!this.disponibilidad) return;
+  
+      this.disponibilidad.forEach(d => {
+        const availableSlots = d.slots.length;
+        if (availableSlots > 3) {
+          this.setDateColor(d.fecha, 'green');
+        } else if (availableSlots >= 1 && availableSlots <= 3) {
+          this.setDateColor(d.fecha, 'yellow');
+        } else {
+          this.setDateColor(d.fecha, 'red');
         }
       });
-    }
+    }, 10);
   }
 
-  idCitaParaEliminar: string | null = null;
+  private setDateColor(fecha: string, color: string) {
+    const dateElements = document.querySelectorAll(`.mat-calendar-body-cell[aria-label='${fecha}']`);
+    dateElements.forEach((el) => {
+      el.classList.remove('green', 'yellow', 'red');
+      el.classList.add(color);
+    });
+  }
 
-abrirConfirmacion(citaId: string) {
-  this.idCitaParaEliminar = citaId;
-}
+resaltarDiasDisponibles = (fecha: Date): string => {
+  const fechaStr = fecha.toISOString().split('T')[0];
+  const entry = this.disponibilidad.find(d => d.fecha === fechaStr);
 
-cancelarEliminar() {
-  this.idCitaParaEliminar = null;
-}
+  if (entry) {
+    const slots = entry.slots.length;
+    if (slots > 3) return 'dia-verde';
+    if (slots >= 1 && slots <= 2) return 'dia-amarillo';
+    return 'dia-rojo';
+  }
+  return '';
+};
 
-confirmarEliminar() {
-  if (!this.idCitaParaEliminar) return;
+cambiarMes(fechaMes: Date) {
+  if (!this.formularioEdicion.value.medico) return;
+  
+  const startDate = new Date(fechaMes.getFullYear(), fechaMes.getMonth(), 1)
+                    .toISOString().split('T')[0];
+  const endDate = new Date(fechaMes.getFullYear(), fechaMes.getMonth() + 1, 0)
+                  .toISOString().split('T')[0];
 
-  this.citasService.eliminarCita(this.idCitaParaEliminar).subscribe({
-    next: () => {
-      this.historial = this.historial.filter(c => c._id !== this.idCitaParaEliminar);
-      this.idCitaParaEliminar = null;
+  this.citasService.obtenerDisponibilidad(
+    this.formularioEdicion.value.medico, 
+    startDate, 
+    endDate
+  ).subscribe({
+    next: (resp: any) => {
+      this.disponibilidad = [...this.disponibilidad, ...resp.disponibilidad];
+      this.resaltarDiasDisponiblesEnCalendario();
     },
-    error: (err) => {
-      console.error(err);
-      this.idCitaParaEliminar = null;
-    }
+    error: (err) => console.error(err)
   });
 }
-
 }

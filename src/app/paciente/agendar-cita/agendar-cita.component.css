@@ -1,110 +1,155 @@
-.agendar-cita-card {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 40px;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: all 0.3s ease;
-    border: 1px solid #f0f0f0;
-  }
-  
-  .titulo {
-    text-align: center;
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #2e7d32;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-  }
-  
-  .usuario {
-    text-align: center;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    color: #555;
+.agendar-cita-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    min-height: 100vh;
+    padding: 2rem;
+    background: #f5f7fb;
+  }
+  
+  .agendar-cita-card {
+    width: 100%;
+    max-width: 680px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-header {
+    padding: 2rem;
+    background: #f8f9ff;
+    border-bottom: 1px solid #e8eefb;
+    text-align: center;
+  }
+  
+  .titulo {
+    color: #2a2d3b;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .header-icon {
+    color: #4a6cf7;
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .usuario {
+    color: #6b7280;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .user-icon {
+    font-size: 1.2rem;
+    color: #4a6cf7;
+  }
+  
+  /* Campos verticales y más nítidos */
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
   }
   
   .campo {
+    margin: 1rem 0;
     width: 100%;
-    margin-bottom: 20px;
-    border-radius: 8px;
   }
   
-  mat-form-field .mat-form-field-infix {
-    border-radius: 8px;
+  /* Mejorar la nitidez de los campos */
+  .mat-form-field {
+    width: 100%;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
   }
   
-  .boton {
-    display: block;
-    width: 100%;
-    font-weight: 600;
-    font-size: 1.1rem;
-    padding: 12px;
-    background-color: #2e7d32;
-    border-radius: 8px;
+  .mat-form-field-label {
+    font-size: 1rem;
+    color: #6b7280;
+  }
+  
+  .mat-input-element {
+    font-size: 1rem;
+    color: #2a2d3b;
+  }
+  
+  .mat-select-value {
+    font-size: 1rem;
+    color: #2a2d3b;
+  }
+  
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: #d1d5db;
+  }
+  
+  .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
+    color: #4a6cf7;
+  }
+  
+  .confirmar-btn {
+    margin: 2rem;
+    padding: 1rem;
+    background: #4a6cf7;
     color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .boton:hover {
-    background-color: #388e3c;
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  .boton:focus {
-    outline: none;
-  }
-  
-  mat-select {
-    border-radius: 8px;
-  }
-  
-  mat-form-field .mat-label {
-    font-weight: 600;
     font-size: 1.1rem;
-    color: #2e7d32;
-  }
-  
-  mat-form-field .mat-select-value {
-    font-size: 1.1rem;
-    color: #333;
-  }
-  
-  mat-form-field textarea {
+    font-weight: 500;
     border-radius: 8px;
-    font-size: 1rem;
-    padding: 12px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
   
-  mat-form-field .mat-form-field-infix {
-    border-radius: 8px;
+  .confirmar-btn:hover {
+    background: #3652c1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 108, 247, 0.25);
   }
   
-  mat-option {
-    font-size: 1rem;
-    padding: 12px;
-  }
-  
-  @media (max-width: 768px) {
-    .agendar-cita-card {
-      padding: 20px;
-      max-width: 90%;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-  
-    .titulo {
-      font-size: 1.8rem;
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
+  }
+  
+  /* Estilos del calendario (sin cambios) */
+  ::ng-deep .mat-calendar-body-cell.dia-verde .mat-calendar-body-cell-content {
+    background-color: #66bb6a !important; /* verde */
+    color: black !important;
+    border-radius: 50%;
+  }
+  
+  ::ng-deep .mat-calendar-body-cell.dia-amarillo .mat-calendar-body-cell-content {
+    background-color: #ffeb3b !important; /* amarillo */
+    color: black !important;
+    border-radius: 50%;
+  }
+  
+  ::ng-deep .mat-calendar-body-cell.dia-rojo .mat-calendar-body-cell-content {
+    background-color: #50ef85 !important; /* rojo */
+    color: white !important;
+    border-radius: 50%;
   }
   

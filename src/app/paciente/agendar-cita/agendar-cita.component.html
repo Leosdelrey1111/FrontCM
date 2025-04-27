@@ -1,63 +1,76 @@
-<div class="agendar-cita-card">
-    <h2 class="titulo">🩺 Agendar Cita Médica</h2>
+<div class="agendar-cita-container">
+    <div class="agendar-cita-card">
+      <div class="card-header">
+        <mat-icon class="header-icon">medical_services</mat-icon>
+        <h2 class="titulo">Agendar Cita Médica</h2>
+        <p *ngIf="nombreUsuario" class="usuario">
+          <mat-icon class="user-icon">person</mat-icon>
+          {{ nombreUsuario }}
+        </p>
+      </div>
   
-    <p *ngIf="nombreUsuario" class="usuario">
-      <mat-icon color="primary">person</mat-icon>
-      <strong>{{ nombreUsuario }}</strong>
-    </p>
+      <div class="form-content">
+        <!-- Especialidad -->
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Especialidad</mat-label>
+          <mat-select [(ngModel)]="especialidad" (selectionChange)="seleccionarEspecialidad(especialidad); onCampoChange()">
+            <mat-option value="">--Seleccione--</mat-option>
+            <mat-option *ngFor="let esp of especialidades" [value]="esp.especialidad">
+              {{ esp.especialidad }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
   
-    <!-- Especialidad -->
-    <mat-form-field appearance="outline" class="campo">
-      <mat-label>Especialidad</mat-label>
-      <mat-select [(ngModel)]="especialidad" (selectionChange)="seleccionarEspecialidad(especialidad)">
-        <mat-option value="">--Seleccione--</mat-option>
-        <mat-option *ngFor="let esp of especialidades" [value]="esp.especialidad">
-          {{ esp.especialidad }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <!-- Médico -->
+        <mat-form-field appearance="outline" *ngIf="especialidad" class="campo">
+          <mat-label>Médico</mat-label>
+          <mat-select [(ngModel)]="medicoId" (selectionChange)="seleccionarMedico(medicoId); onCampoChange()">
+            <mat-option value="">--Seleccione--</mat-option>
+            <mat-option *ngFor="let m of medicosFiltrados" [value]="m._id">
+              {{ m.nombre }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
   
-    <!-- Médico -->
-    <mat-form-field appearance="outline" *ngIf="especialidad" class="campo">
-      <mat-label>Médico</mat-label>
-      <mat-select [(ngModel)]="medicoId" (selectionChange)="seleccionarMedico(medicoId)">
-        <mat-option value="">--Seleccione--</mat-option>
-        <mat-option *ngFor="let m of medicosFiltrados" [value]="m._id">
-          {{ m.nombre }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <!-- Fecha -->
+        <mat-form-field appearance="outline" *ngIf="disponibilidad.length" class="campo">
+          <mat-label>Fecha</mat-label>
+          <input matInput 
+                 [matDatepicker]="picker" 
+                 [min]="minDate"
+                 [matDatepickerFilter]="filtrarFechasDisponibles"
+                 [(ngModel)]="fechaSeleccionada" 
+                 (dateChange)="onFechaChange(); onCampoChange()">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker 
+                          (monthSelected)="cambiarMes($event)"
+                          (opened)="onDatepickerOpened(picker)" 
+                          [dateClass]="resaltarDiasDisponibles.bind(this)">
+          </mat-datepicker>
+        </mat-form-field>
   
-    <!-- Fecha -->
-    <mat-form-field appearance="outline" *ngIf="disponibilidad.length" class="campo">
-      <mat-label>Fecha</mat-label>
-      <mat-select [(ngModel)]="fechaSeleccionadaIso" (selectionChange)="onFechaChange()">
-        <mat-option value="">--Seleccione--</mat-option>
-        <mat-option *ngFor="let d of disponibilidad" [value]="d.fecha">
-          {{ d.dia | titlecase }} — {{ d.fecha }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <!-- Hora -->
+        <mat-form-field appearance="outline" *ngIf="horasDisponibles.length" class="campo">
+          <mat-label>Hora</mat-label>
+          <mat-select [(ngModel)]="hora" (selectionChange)="onCampoChange()">
+            <mat-option value="">--Seleccione--</mat-option>
+            <mat-option *ngFor="let h of horasDisponibles" [value]="h">
+              {{ h }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
   
-    <!-- Hora -->
-    <mat-form-field appearance="outline" *ngIf="horasDisponibles.length" class="campo">
-      <mat-label>Hora</mat-label>
-      <mat-select [(ngModel)]="hora">
-        <mat-option value="">--Seleccione--</mat-option>
-        <mat-option *ngFor="let h of horasDisponibles" [value]="h">
-          {{ h }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <!-- Motivo -->
+        <mat-form-field appearance="outline" class="campo" *ngIf="camposCompletos">
+          <mat-label>Motivo de la cita</mat-label>
+          <textarea matInput [(ngModel)]="motivo" rows="3" placeholder="Describe brevemente el motivo de la cita"></textarea>
+        </mat-form-field>
   
-    <!-- Motivo -->
-    <mat-form-field appearance="outline" class="campo">
-      <mat-label>Motivo de la cita</mat-label>
-      <textarea matInput [(ngModel)]="motivo" rows="3" placeholder="Describe brevemente el motivo de la cita"></textarea>
-    </mat-form-field>
-  
-    <button mat-raised-button color="primary" class="boton" (click)="confirmarCita()">
-      💾 Confirmar Cita
-    </button>
+        <button mat-raised-button class="confirmar-btn" (click)="confirmarCita()">
+          <mat-icon>event_available</mat-icon>
+          Confirmar Cita
+        </button>
+      </div>
+    </div>
   </div>
   

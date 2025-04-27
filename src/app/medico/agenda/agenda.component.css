@@ -1,44 +1,116 @@
+:host {
+  --primary-color: #2A5C82;
+  --secondary-color: #5BA4E6;
+  --success-color: #28A745;
+  --warning-color: #FFC107;
+  --danger-color: #DC3545;
+}
+
 .citas-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 20px;
+}
+
+.cita-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.cita-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-inner {
+  padding: 1.8rem;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.especialidad {
+  color: var(--primary-color);
+  font-weight: bold;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  color: #495057;
+}
+
+.info-item i {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  width: 26px;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.btn-success-custom {
+  background-color: var(--success-color);
+  border: 1px solid transparent;
+  color: white;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-success-custom:hover {
+  background-color: #218838;
+}
+
+.btn-reset {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-reset:hover {
+  background-color: #4c94d6;
+}
+
+/* Animación de entrada */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-  
-  .cita-card {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .cita-card:hover {
-    transform: scale(1.05);
-  }
-  
-  .cita-card h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-  }
-  
-  .cita-card p {
-    margin: 5px 0;
-  }
-  
-  .cita-card button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 1em;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-top: 10px;
-  }
-  
-  .cita-card button:hover {
-    background-color: #45a049;
-  }
-  
+}
+
+.card-animation {
+  animation: cardEnter 0.5s ease;
+}

@@ -1,17 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-paciente-layout-component',
   templateUrl: './paciente-layout-component.component.html',
-  styleUrl: './paciente-layout-component.component.css'
+  styleUrls: ['./paciente-layout-component.component.css']
 })
-export class PacienteLayoutComponentComponent {
-  usuarioNombre: string = 'Usuario'; // Debes obtenerlo del servicio de autenticación
+export class PacienteLayoutComponentComponent implements OnInit {
+  usuarioNombre: string = 'Paciente';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  // logout() {
-  //   this.authService.logout();
-  // }
+  ngOnInit(): void {
+    const usuarioData = localStorage.getItem('usuario');
+    if (usuarioData) {
+      const usuario = JSON.parse(usuarioData);
+      this.usuarioNombre = usuario.nombreCompleto || 'Paciente';
+    }
+  }
+
+  logout(): void {
+    localStorage.clear();
+    this.router.navigate(['/']);
+  }
 }
+ 
